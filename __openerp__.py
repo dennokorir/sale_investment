@@ -3,24 +3,26 @@
     'name': "sale_investments",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        Extension of sales module to accomodate sale of properties to investors""",
 
     'description': """
-        Long description of module's purpose
+        This is an extension to allow investors purchase land, track payment for those properties
+        over time and penalize defaulters for late payment. Also provides functionality for purchase,
+        subdivision and allocation of costs to be included in cost of sales for properties. Maintains
+        an investor register and allows registration of investors
     """,
 
-    'author': "Your Company",
-    'website': "http://www.yourcompany.com",
+    'author': "Tritel Technologies",
+    'website': "http://www.tritel.co.ke",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
     # for the full list
-    'category': 'Uncategorized',
-    'version': '0.1',
+    'category': 'Investment',
+    'version': '1.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base','sale'],
 
     # always loaded
     'data': [

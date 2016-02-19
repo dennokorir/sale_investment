@@ -1,35 +1,475 @@
 <openerp>
     <data>
-
-    	<record model = 'ir.ui.view' id = 'sale_investment_investor_registration_form'>
+    	
+    	<record model = 'ir.ui.view' id = 'sale_investment_investor_registrations_form'>
     		<field name = 'name'>Investor Registration</field>
     		<field name = 'model'>sale.investor.registration</field>
-    		<field name = 'inherit_id' ref = "base.view_partner_form"/>
-    		<field name = 'arch' type = 'xml'>
-    			<xpath expr = "//field[@name='is_company']" position = "after">
-    				<field name = "investor" string = "is investor?"/>
-    			</xpath>
+     		<field name = 'arch' type = 'xml'>
+    			<form>
+            <header></header>
+            <sheet>
+            <group>   
+                <group string = 'General'>
+                  <field name  = 'no' />
+                  <field name  = 'name' />
+                  <field name  = 'registration_date' />
+                  <field name  = 'date_of_birth' />
+                  
+                  
+                </group>
+                <group string = 'Important'>
+                  <field name  = 'idno' />
+                  <field name  = 'passportno' />
+                  <field name = 'member_pin' />
+                  <field name  = 'marital_status' />
+                  <field name  = 'gender' />
+                  <field name  = 'occupation' />
+                  <field name  = 'designation' />
+                  
+                </group>
+                <group string = 'Additional'>
+                  <field name = 'recruited_by' />
+                  <field name = 'approved_by' />
+                  <field name = 'bank_account_no' />  
+                  <field name = 'bank_name' />
+                </group>
+            </group>
+               <notebook>
+                <page string = 'Communication'>
+                  <group colspan = '2'>
+                    <group>
+                      <field name  = 'mobile_no' />
+                      <field name  = 'phone_no' />
+                      <field name  = 'email' />
+                      <field name  = 'contact_person' />
+                      <field name  = 'contact_person_phone_no' />
+                      <field name  = 'contact_person_relation' />
+                    </group>
+                    <group>
+                      <field name  = 'home_address' />
+                      <field name  = 'location' />
+                      <field name  = 'sublocation' />
+                      <field name  = 'district' />
+                    </group>
+                  </group>
+
+
+                </page>
+                <page string = 'Salary Details'>
+                  <group colspan = '2'>
+                      <group>
+                        <field name  = 'payrollno' />
+                         <field name = 'basic_pay'/>
+                         <field name = 'house_allowance'/>
+                         <field name = 'transport_allowance'/>
+                      </group>
+                      <group>
+                         <field name = 'other_benefits'/>
+                         <field name = 'total_deductions'/>
+                         <field name = 'net_income'/>
+                      </group>
+                   </group>
+                </page>
+               </notebook>
+              </sheet>
+	    		</form>
     		</field>
     	</record>
-
+    	
     	<record model = 'ir.ui.view' id = 'sale_investment_investor_registration_list'>
     		<field name = 'name'>Investor Registration List</field>
     		<field name = 'model'>sale.investor.registration</field>
-    		<field name = 'inherit_id' ref = 'base.view_partner_tree'/>
     		<field name = 'arch' type = 'xml'>
-    			<field name = 'investor'/>
+    			<tree>
+      			<field name  = 'no' />
+            <field name  = 'name' />
+            <field name  = 'address' />
+            <field name  = 'phone_no' />
+            <field name  = 'mobile_no' />
+            <field name  = 'email' />
+    			</tree>
+    		</field>
+    		
+    	</record>
+
+
+
+       <record model = 'ir.ui.view' id = 'investor_closure_form_view'>
+        <field name = 'name'>Investor Closure Form</field>
+        <field name = 'model'>sale.investment.investor.closure</field>
+        <field name = 'arch' type = 'xml'>
+          <form>
+            <header>
+             
+            </header>
+            <sheet>
+              <field name = 'image' widget="image" class="oe_left oe_avatar"/>
+              <group colspan = '2'>
+                <group>
+                  <field name = 'no'/>
+                  <field name = 'investor_no' widget = 'selection'/>
+                  <field name = 'closing_date'/>
+                  <field name = 'closed'/>
+                </group>
+                <group>
+                  <field name = 'closure_type'/>
+                  <field name = 'remarks'/>
+                </group>
+              </group>
+            </sheet>
+          </form>
+        </field>
+
+      </record>
+      <record model = 'ir.ui.view' id = 'investor_closure_tree_view'>
+        <field name = 'name'>Investor Closure List</field>
+        <field name = 'model'>sale.investment.investor.closure</field>
+        <field name = 'arch' type = 'xml'>
+          <tree>
+            <field name = 'no'/>
+            <field name = 'investor_no'/>
+            <field name = 'closing_date'/>
+            <field name = 'status'/>
+            <field name = 'closed'/>
+          </tree>
+        </field>
+      </record>
+		   
+		
+		<record model = 'ir.ui.view' id = 'sale_investment_investor_form'>
+			<field name = 'name'>Investor Form</field>
+			<field name = 'model'>res.partner</field>
+			<field name = 'inherit_id' ref = "base.view_partner_form"/>
+			<field name = 'arch' type = 'xml'>
+				<xpath expr = "//field[@name='is_company']" position = "after">
+	    			<field name = "investor" string = "is investor?"/>
+	    		</xpath>
+			</field>
+		</record>
+
+		<record model = 'ir.ui.view' id = 'sale_investment_investor_tree'>
+			<field name = 'name'>Investor Card</field>
+			<field name = 'model'>res.partner</field>
+			<field name = 'inherit_id' ref = "base.view_partner_tree"/>
+			<field name = 'arch' type = 'xml'>
+				<xpath expr = "//field[@name='display_name']" position = "after">
+	    			<field name = "investor" string = "is investor?"/>
+	    		</xpath>
+			</field>
+		</record>
+
+
+    <record model = 'ir.ui.view' id = 'sale_investments_investor_activation_form_view'>
+        <field name = 'name'>Investor Activation</field>
+        <field name = 'model'>sale.investment.investor.activation</field>
+        <field name = 'arch' type = 'xml'>
+          <form>
+            <header>
+              
+            </header>
+            <sheet>
+              <group colspan = '2'>
+                <group>
+                  <field name = 'no'/> 
+                  <field name = 'investor_no'/>
+                  <field name = 'activation_date'/>
+                  <field name = 'status'/>
+                  <field name = 'activated'/>
+                </group>
+                <group>
+                
+                </group>
+              </group>
+            </sheet>
+          </form>
+        </field>
+      </record>
+      <record model = 'ir.ui.view' id = 'sale_investment_investor_activation_tree_view'>
+        <field name = 'name'>Investor Activation List</field>
+        <field name = 'model'>sale.investment.investor.activation</field>
+        <field name = 'arch' type = 'xml'>
+          <tree string = 'Investor Activation List'>
+              <field name = 'no'/> 
+              <field name = 'investor_no'/>
+              <field name = 'activation_date'/>
+              <field name = 'status'/>
+              <field name = 'activated'/>
+          </tree>
+        </field>   
+      </record>
+
+    	<record model = 'ir.ui.view' id = 'sale_investment_project_costing_form'>
+    		<field name = 'name'>Project Costing</field>
+    		<field name = 'model'>investment.project.costing.header</field>
+    		<field name = 'arch' type = 'xml'>
+    			<form>
+    				<header></header>
+    				<sheet>
+    					<group>
+    						<group string = 'General'>
+    							<field name = 'no'/>
+    							<field name = 'name'/>
+    							<field name = 'description'/>
+    							<field name = 'date'/>
+    							<field name = 'title_deed_no'/>
+                  <field name = 'costing_from'/>
+    							<field name = 'vendor_quotation' attrs="{'invisible': [('costing_from', '!=', 'quotation')]}"/>
+    							<field name = 'vendor_invoice' attrs="{'invisible': [('costing_from', '!=', 'invoice')]}"/>
+                  <field name = 'vendor'/>
+                  <field name = 'purchase_cost'/>
+                  <field name = 'profit_margin'/>
+    						</group>
+    						<group string = 'Land Information'>
+    							<field name = 'total_acreage'/>
+    							<field name = 'allocation_to_ammenities'/>
+    							<field name = 'useful_acreage'/>
+    							<field name = 'user_id'/>
+    							<field name = 'state'/>
+    							<field name = 'posted'/>
+                  <field name = 'percentage_allocation'/>
+    							
+    						</group>
+    					</group>
+              <notebook>
+                <page string = "Costing Lines">
+                  <field name = 'line_ids'>
+                    <tree editable = "bottom">
+                      
+                      <field name = 'no'/>
+                      <field name = 'unit_of_measure'/>
+                      <field name = 'size_of_plots'/>
+                      <field name = 'allocation_percentage'/>
+                      <field name = 'no_of_plots'/>
+                      
+                      <field name = 'land_purchase_cost'/>
+                      <field name = 'land_cost_per_plot'/>
+                      <field name = 'overheads'/>
+                      <field name = 'total_cost'/>
+                      <field name = 'margin'/>
+                      <field name = 'price'/>
+                      <!--
+                        <field name = 'useful_acreage'/>
+                        <field name = 'unit_price'/>
+                        <field name = 'total_acreage'/>
+                        <field name = 'useful_acreage'/>
+                          
+                      -->
+                    </tree>
+                  </field>
+                </page>
+              </notebook>
+    				</sheet>
+    			</form>		
+    		</field>
+    	</record>
+
+    	<record model = 'ir.ui.view' id = 'sale_investment_project_costing_tree'>
+    		<field name = 'name'>Project Costing List</field>
+    		<field name = 'model'>investment.project.costing.header</field>
+    		<field name = 'arch' type = 'xml'>
+    			<tree>
+    				<field name = 'no'/>
+    				<field name = 'name'/>
+    				<field name = 'description'/>
+    				<field name = 'date'/>
+    				<field name = 'total_acreage'/>
+    			</tree>
     		</field>
     	</record>
 
 
-    	<record model = 'ir.actions.act_window' id = 'sale_investments_registration_action'>
+
+      <record model = 'ir.ui.view' id = 'sale_investments_penalty_form_view'>
+      <field name = 'name'>Monthly Penalties</field>
+      <field name = 'model'>sale.investment.monthly.penalty</field>
+      <field name = 'arch' type = 'xml'>
+         <form>
+            <sheet>
+               <header>
+                  
+               </header>
+               <group>
+                  <field name = 'name'/>
+                  <field name = 'date'/>
+                  <field name = 'amount'/>
+                  <field name = 'posted'/>
+               </group>
+               <notebook>
+                  <page string = 'Monthly Penalty Details'>
+                     <field name = 'line_ids'>
+                        <tree>
+                           <field name = 'investor_no'/>
+                           <field name = 'investor_name'/>
+                           <field name = 'invoice_no'/>
+                           <field name = 'invoice_amount'/>
+                           <field name = 'monthly_amount'/>
+                              
+                        </tree>
+                     </field>
+                  </page>
+               </notebook>
+            </sheet>
+         </form>
+      </field>
+   </record>
+   <record model = 'ir.ui.view' id = 'sale_investment_penalty_tree_view'>
+      <field name = 'name'>Monthly Penalty</field>
+      <field name = 'model'>sale.investment.monthly.penalty</field>
+      <field name = 'arch' type = 'xml'>
+         <tree string = 'Monthly Penalty'>
+            <field name = 'name'/>
+            <field name = 'date'/>
+            <field name = 'amount'/>
+            <field name = 'posted'/>
+         </tree>
+      </field>
+   </record>
+
+
+   <record model = 'ir.ui.view' id = 'sale_investments_land_transactions_form_view'>
+     <field name = 'name'>Land Transactions</field>
+     <field name = 'model'>investment.land.transactions</field>
+     <field name = 'arch' type = 'xml'>
+       <form>
+         <sheet>
+           <group>
+             <group>
+               <field name = 'name'/>
+               <field name = 'description'/>
+               <field name = 'attracts_vat'/>
+               <field name = 'attracts_margin'/>
+             </group>
+             <group></group>
+           </group>
+         </sheet>
+       </form>
+     </field>
+   </record>
+
+   <record model = 'ir.ui.view' id = 'sale_investments_land_transactions_tree_view'>
+     <field name = 'name'>Land Transactions</field>
+     <field name = 'model'>investment.land.transactions</field>
+     <field name = 'arch' type = 'xml'>
+       <tree>
+         <field name = 'name'/>
+         <field name = 'description'/>
+         <field name = 'attracts_vat'/>
+         <field name = 'attracts_margin'/>
+       </tree>
+     </field>
+   </record>
+
+   <record model = 'ir.ui.view' id = 'sale_investments_land_overheads_form_view'>
+     <field name = 'name'>Land Transaction Costs</field>
+     <field name = 'model'>investment.land.transaction.costs</field>
+     <field name = 'arch' type = 'xml'>
+       <form>
+         <sheet>
+           <group>
+             <group>
+               <field name = 'overhead'/>
+               <field name = 'description'/>
+               <field name = 'based_on'/>
+               <field name = 'percentage'/>
+               <field name = 'cost'/>
+             </group>
+             <group></group>
+           </group>
+         </sheet>
+       </form>
+     </field>
+   </record>
+
+   <record model = 'ir.ui.view' id = 'sale_investments_land_overheads_tree_view'>
+     <field name = 'name'>Land Transaction Costs</field>
+     <field name = 'model'>investment.land.transaction.costs</field>
+     <field name = 'arch' type = 'xml'>
+       <tree>
+         <field name = 'overhead'/>
+         <field name = 'description'/>
+         <field name = 'cost'/>
+       </tree>
+     </field>
+   </record>
+
+    	<record model = 'ir.actions.act_window' id = 'sale_investments_registration_action'> 
     		<field name = 'name'>Investor Registration</field>
     		<field name = 'res_model'>sale.investor.registration</field>
-    		<field name = 'view_type'>tree</field>
+    		<field name = 'view_type'>form</field>
     		<field name = 'view_mode'>tree,form</field>
     	</record>
-      <menuitem name ="Investmentssss" id = "sale_investment_main_menu" />
+      <menuitem name ="Investment" id = "sale_investment_main_menu" />
       <menuitem name = "Investor Management" id = "sale_investment_investor_management_main_menu" parent = "sale_investment_main_menu"/>
       <menuitem name = "Investor Application list" id = "sale_investment_investor_application_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_registration_action"/>
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_investors_action'>
+    		<field name = 'name'>Investor List</field>
+    		<field name = 'res_model'>res.partner</field>
+    		<field name = "domain">[('investor','=',1)]</field>
+        	<field name = "filter" eval = "True"/>
+    		<field name = 'view_type'>form</field>
+    		<field name = 'view_mode'>tree,form</field>
+    	</record>
+      
+      <menuitem name = "Investor list" id = "sale_investment_investor_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_investors_action"/>
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_investor_closure_action'>
+        <field name = 'name'>Investor Closure List</field>
+        <field name = 'res_model'>sale.investment.investor.closure</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Investor Closure" id = "sale_investment_closure_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_investor_closure_action"/>
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_investor_activation_action'>
+        <field name = 'name'>Investor Activation List</field>
+        <field name = 'res_model'>sale.investment.investor.activation</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Investor Activation" id = "sale_investment_activation_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_investor_activation_action"/>
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_project_costing_action'>
+    		<field name = 'name'>Project Costing</field>
+    		<field name = 'res_model'>investment.project.costing.header</field>
+    		<field name = 'view_type'>form</field>
+    		<field name = 'view_mode'>tree,form</field>
+    	</record>
+      
+      <menuitem name = "Project Management" id = "sale_investment_project_management_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Project Costing list" id = "sale_investment_project_costing_list" parent = "sale_investment_project_management_main_menu" action = "sale_investments_project_costing_action"/>
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_monthly_penalty_action'>
+        <field name = 'name'>Monthly Penalties</field>
+        <field name = 'res_model'>sale.investment.monthly.penalty</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Periodic Activities" id = "sale_investment_periodic_activities_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Monthly Penalties" id = "sale_investment_monthly_penalty_list" parent = "sale_investment_periodic_activities_main_menu" action = "sale_investments_monthly_penalty_action"/>
+
+       <record model = 'ir.actions.act_window' id = 'sale_investments_land_transactions_action'>
+        <field name = 'name'>Land Transactions Setup</field>
+        <field name = 'res_model'>investment.land.transactions</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Configuration" id = "sale_investment_configuration_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Land Transactions Setup" id = "sale_investment_land_transactions_list" parent = "sale_investment_configuration_main_menu" action = "sale_investments_land_transactions_action"/>
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_land_transaction_costs_action'>
+        <field name = 'name'>Land Transactions Costs</field>
+        <field name = 'res_model'>investment.land.transaction.costs</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Land Transaction Costs" id = "sale_investment_land_transactions_costs" parent = "sale_investment_configuration_main_menu" action = "sale_investments_land_transaction_costs_action"/>
+
+
     </data>
 </openerp>

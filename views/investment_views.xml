@@ -6,7 +6,10 @@
     		<field name = 'model'>sale.investor.registration</field>
      		<field name = 'arch' type = 'xml'>
     			<form>
-            <header></header>
+            <header>
+              <button name = 'create_investor' type = 'object' class = 'oe_highlight' string = "Create Investor" confirm = "Create Investor"/>
+              <field name = 'state' widget = "statusbar"/>
+            </header>
             <sheet>
             <group>   
                 <group string = 'General'>
@@ -25,7 +28,7 @@
                   <field name  = 'gender' />
                   <field name  = 'occupation' />
                   <field name  = 'designation' />
-                  
+                  <field name = 'created'/>
                 </group>
                 <group string = 'Additional'>
                   <field name = 'recruited_by' />
@@ -55,6 +58,7 @@
 
 
                 </page>
+                <!--
                 <page string = 'Salary Details'>
                   <group colspan = '2'>
                       <group>
@@ -70,13 +74,15 @@
                       </group>
                    </group>
                 </page>
+                -->
                </notebook>
+
               </sheet>
 	    		</form>
     		</field>
     	</record>
     	
-    	<record model = 'ir.ui.view' id = 'sale_investment_investor_registration_list'>
+    	<record model = 'ir.ui.view' id = 'sale_investment_investor_registration_list'> 
     		<field name = 'name'>Investor Registration List</field>
     		<field name = 'model'>sale.investor.registration</field>
     		<field name = 'arch' type = 'xml'>
@@ -100,7 +106,8 @@
         <field name = 'arch' type = 'xml'>
           <form>
             <header>
-             
+              <button name = 'deactivate' type = "object" string = "Deactivate Investor" class = "oe_highlight" confirm = "De-Activate Investor?"/>
+              <field name = "state" widget = 'statusbar'/>
             </header>
             <sheet>
               <field name = 'image' widget="image" class="oe_left oe_avatar"/>
@@ -129,7 +136,7 @@
             <field name = 'no'/>
             <field name = 'investor_no'/>
             <field name = 'closing_date'/>
-            <field name = 'status'/>
+            <field name = 'state'/>
             <field name = 'closed'/>
           </tree>
         </field>
@@ -155,6 +162,10 @@
 				<xpath expr = "//field[@name='display_name']" position = "after">
 	    			<field name = "investor" string = "is investor?"/>
 	    		</xpath>
+
+        <xpath expr = "//field[@name='display_name']" position = "before">
+          <field name = 'investor_no' string = "Investor No."/>
+        </xpath>
 			</field>
 		</record>
 
@@ -165,7 +176,8 @@
         <field name = 'arch' type = 'xml'>
           <form>
             <header>
-              
+              <button name = 'activate' type = "object" string = "Activate Investor" class = "oe_highlight" confirm = "Activate Investor Account?"/>
+              <field name = 'state' widget = "statusbar"/>
             </header>
             <sheet>
               <group colspan = '2'>
@@ -173,7 +185,7 @@
                   <field name = 'no'/> 
                   <field name = 'investor_no'/>
                   <field name = 'activation_date'/>
-                  <field name = 'status'/>
+                  
                   <field name = 'activated'/>
                 </group>
                 <group>
@@ -192,7 +204,7 @@
               <field name = 'no'/> 
               <field name = 'investor_no'/>
               <field name = 'activation_date'/>
-              <field name = 'status'/>
+              <field name = 'state'/>
               <field name = 'activated'/>
           </tree>
         </field>   
@@ -200,10 +212,16 @@
 
     	<record model = 'ir.ui.view' id = 'sale_investment_project_costing_form'>
     		<field name = 'name'>Project Costing</field>
-    		<field name = 'model'>investment.project.costing.header</field>
+    		<field name = 'model'>investment.project.costing.header</field>    
     		<field name = 'arch' type = 'xml'>
     			<form>
-    				<header></header>
+    				<header>
+              <button name = '%(launch_project_costing_wizard)d' type = 'action'
+                       context="{'default_project_id':id, 'default_project_no':no, 'default_project_name':name}" string = 'Allotment' class = 'oe_highlight' states = "ready"/>
+              <button name = "reset_to_draft" type = "object" string = "Reset to Draft" class = "oe_highlight" states = "ready"/>         
+              <button name = "mark_as_ready" type = "object" string = "Mark as Ready" class = "oe_highlight" states = "draft"/>
+              <field name = 'state' widget = 'statusbar'/>    
+            </header>
     				<sheet>
     					<group>
     						<group string = 'General'>
@@ -224,9 +242,9 @@
     							<field name = 'allocation_to_ammenities'/>
     							<field name = 'useful_acreage'/>
     							<field name = 'user_id'/>
-    							<field name = 'state'/>
+    							
     							<field name = 'posted'/>
-                  <field name = 'percentage_allocation'/>
+                  <field name = 'percentage_allocation' widget = 'progressbar'/>
     							
     						</group>
     					</group>
@@ -235,30 +253,28 @@
                   <field name = 'line_ids'>
                     <tree editable = "bottom">
                       
-                      <field name = 'no'/>
+                      
                       <field name = 'unit_of_measure'/>
                       <field name = 'size_of_plots'/>
                       <field name = 'allocation_percentage'/>
                       <field name = 'no_of_plots'/>
-                      
                       <field name = 'land_purchase_cost'/>
-                      <field name = 'land_cost_per_plot'/>
                       <field name = 'overheads'/>
+                      <button name = '%(sale_investment_overheads_action)d' type = 'action'
+                       context="{'default_header_id':active_id}" icon="gtk-execute"/>
                       <field name = 'total_cost'/>
                       <field name = 'margin'/>
                       <field name = 'price'/>
-                      <!--
-                        <field name = 'useful_acreage'/>
-                        <field name = 'unit_price'/>
-                        <field name = 'total_acreage'/>
-                        <field name = 'useful_acreage'/>
-                          
-                      -->
-                    </tree>
+                      <field name = 'land_cost_per_plot'/>
+                      <field name = 'price_per_plot'/>
+                   </tree>
                   </field>
+                 
                 </page>
               </notebook>
+              
     				</sheet>
+
     			</form>		
     		</field>
     	</record>
@@ -277,9 +293,34 @@
     		</field>
     	</record>
 
+      <record model = 'ir.ui.view' id = 'sale_investment_overheads_tree_view'>
+        <field name = 'name'>Overheads</field>
+        <field name = 'model'>investment.land.overheads</field>
+        <field name = 'arch' type = 'xml'>
+          <tree editable = "bottom">
+            <field name = 'header_id'/>
+            <field name = 'code'/>
+            <field name = 'description'/>
+            <field name = 'fee_charged' sum = "fee_charged"/>
+            <field name = 'vat' sum = "vat"/>
+            <field name = 'total_cost' sum = "total_cost"/>
+            
+          </tree>
+        </field>  
+      </record>
 
+      <record model="ir.ui.view" id="overheads_search_view">
+            <field name="name">Overheads Search</field>
+            <field name="model">investment.land.overheads</field>
+            <field name="arch" type="xml">
+                <search>
+                  <field name="header_id"/>
+                </search>
+            </field>
+        </record>
 
-      <record model = 'ir.ui.view' id = 'sale_investments_penalty_form_view'>
+    
+      <record model = 'ir.ui.view' id = 'sale_investments_penalty_form_view'>  
       <field name = 'name'>Monthly Penalties</field>
       <field name = 'model'>sale.investment.monthly.penalty</field>
       <field name = 'arch' type = 'xml'>
@@ -312,7 +353,8 @@
          </form>
       </field>
    </record>
-   <record model = 'ir.ui.view' id = 'sale_investment_penalty_tree_view'>
+
+    <record model = 'ir.ui.view' id = 'sale_investment_penalty_tree_view'>
       <field name = 'name'>Monthly Penalty</field>
       <field name = 'model'>sale.investment.monthly.penalty</field>
       <field name = 'arch' type = 'xml'>
@@ -323,7 +365,7 @@
             <field name = 'posted'/>
          </tree>
       </field>
-   </record>
+    </record>
 
 
    <record model = 'ir.ui.view' id = 'sale_investments_land_transactions_form_view'>
@@ -337,7 +379,7 @@
                <field name = 'name'/>
                <field name = 'description'/>
                <field name = 'attracts_vat'/>
-               <field name = 'attracts_margin'/>
+               
              </group>
              <group></group>
            </group>
@@ -354,7 +396,7 @@
          <field name = 'name'/>
          <field name = 'description'/>
          <field name = 'attracts_vat'/>
-         <field name = 'attracts_margin'/>
+         
        </tree>
      </field>
    </record>
@@ -392,15 +434,96 @@
      </field>
    </record>
 
+   <record model = 'ir.ui.view' id = 'sale_investments_general_setup_form_view'>
+     <field name = 'name'>General Setup</field>
+     <field name = 'model'>sale.investment.general.setup</field>
+     <field name = 'arch' type = 'xml'>
+       <form>
+         <sheet>
+           <group>
+             <group>
+               <field name = 'name'/>
+             </group>
+             <group>
+               
+             </group>
+             <notebook>
+               <page string = 'Numbering'>
+                 <group>
+                   <field name = 'investor_application_nos'/>
+                   <field name = 'investor_nos'/>
+                   <field name = 'investor_closure_nos'/>
+                   <field name = 'investor_activation_nos'/>
+                   
+                   <field name = 'project_nos'/>
+                 </group>
+               </page>
+               <page string = 'Accounting'>
+                 <group>
+                   <group>
+                     <field name = 'land_asset_account'/>
+                   </group>
+                   <group></group>
+                 </group>
+               </page>
+             </notebook>
+           </group>
+         </sheet>
+       </form>
+     </field>
+   </record>
+
+   <record model = 'ir.ui.view' id = 'sale_investments_general_setup_tree_view'>
+     <field name = 'name'>General Setup</field>
+     <field name = 'model'>sale.investment.general.setup</field>
+     <field name = 'arch' type = 'xml'>
+       <tree>
+         <field name = 'name'/>
+         
+       </tree>
+     </field>
+   </record>
+
+   <record model = 'ir.ui.view' id = 'test'>
+     <field name = 'name'>Test</field>
+     <field name = 'model'>test</field>
+     <field name = 'arch' type = 'xml'>
+      <tree>
+         <field name = 'field1'/>
+         <field name = 'field2'/>
+         <field name = 'field3'/>
+         <field name = 'field4'/>
+         <field name = 'field5'/>
+         <field name = 'field6'/>
+      </tree>
+     </field>
+   </record>
+
+
     	<record model = 'ir.actions.act_window' id = 'sale_investments_registration_action'> 
     		<field name = 'name'>Investor Registration</field>
     		<field name = 'res_model'>sale.investor.registration</field>
+        <field name = "domain">[('created','=',0)]</field>
+        <field name = "filter" eval = "True"/>
     		<field name = 'view_type'>form</field>
     		<field name = 'view_mode'>tree,form</field>
     	</record>
       <menuitem name ="Investment" id = "sale_investment_main_menu" />
       <menuitem name = "Investor Management" id = "sale_investment_investor_management_main_menu" parent = "sale_investment_main_menu"/>
       <menuitem name = "Investor Application list" id = "sale_investment_investor_application_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_registration_action"/>
+
+      <!--History-->
+      <record model = 'ir.actions.act_window' id = 'sale_investments_registration_action_history'> 
+        <field name = 'name'>Posted Investor Registration</field>
+        <field name = 'res_model'>sale.investor.registration</field>
+        <field name = "domain">[('created','=',1)]</field>
+        <field name = "filter" eval = "True"/>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = 'History' id = 'sale_investment_investor_management_history_main_menu' parent = 'sale_investment_investor_management_main_menu' sequence = "50"/>
+      <menuitem name = 'Posted Member Applications' id = 'sale_investment_investor_application_history' parent = 'sale_investment_investor_management_history_main_menu' action = "sale_investments_registration_action_history"/> 
 
       <record model = 'ir.actions.act_window' id = 'sale_investments_investors_action'>
     		<field name = 'name'>Investor List</field>
@@ -416,12 +539,26 @@
       <record model = 'ir.actions.act_window' id = 'sale_investments_investor_closure_action'>
         <field name = 'name'>Investor Closure List</field>
         <field name = 'res_model'>sale.investment.investor.closure</field>
+        <field name = "domain">[('closed','=',0)]</field>
+        <field name = "filter" eval = "True"/>
         <field name = 'view_type'>form</field>
         <field name = 'view_mode'>tree,form</field>
       </record>
       
       <menuitem name = "Investor Closure" id = "sale_investment_closure_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_investor_closure_action"/>
 
+      <!--History-->
+      <record model = 'ir.actions.act_window' id = 'sale_investments_investor_closure_action_history'>
+        <field name = 'name'>Posted Investor Closure</field>
+        <field name = 'res_model'>sale.investment.investor.closure</field>
+        <field name = "domain">[('closed','=',1)]</field>
+        <field name = "filter" eval = "True"/>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Posted Investor Closure" id = "sale_investment_closure_list_history" parent = "sale_investment_investor_management_history_main_menu" action = "sale_investments_investor_closure_action_history"/>
+      
       <record model = 'ir.actions.act_window' id = 'sale_investments_investor_activation_action'>
         <field name = 'name'>Investor Activation List</field>
         <field name = 'res_model'>sale.investment.investor.activation</field>
@@ -430,10 +567,12 @@
       </record>
       
       <menuitem name = "Investor Activation" id = "sale_investment_activation_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_investor_activation_action"/>
-
+  
       <record model = 'ir.actions.act_window' id = 'sale_investments_project_costing_action'>
     		<field name = 'name'>Project Costing</field>
     		<field name = 'res_model'>investment.project.costing.header</field>
+        <field name = 'domain'>[('posted','=',0)]</field>
+        <field name = 'filter' eval = "True"/>
     		<field name = 'view_type'>form</field>
     		<field name = 'view_mode'>tree,form</field>
     	</record>
@@ -441,6 +580,28 @@
       <menuitem name = "Project Management" id = "sale_investment_project_management_main_menu" parent = "sale_investment_main_menu"/>
       <menuitem name = "Project Costing list" id = "sale_investment_project_costing_list" parent = "sale_investment_project_management_main_menu" action = "sale_investments_project_costing_action"/>
 
+      <!--History-->
+      <record model = 'ir.actions.act_window' id = 'sale_investments_project_costing_action_history'>
+        <field name = 'name'>Processed Projects</field>
+        <field name = 'res_model'>investment.project.costing.header</field>
+        <field name = 'domain'>[('posted','=',1)]</field>
+        <field name = 'filter' eval = "True"/>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "History" id = 'sale_investment_project_management_history_main_menu' parent = "sale_investment_project_management_main_menu" />
+      <menuitem name = "Processed Projects list" id = "sale_investment_project_costing_list_history" parent = "sale_investment_project_management_history_main_menu" action = "sale_investments_project_costing_action_history"/>
+      
+      <record model = 'ir.actions.act_window' id = 'sale_investment_overheads_action'>
+        <field name = 'name'>Overheads</field>
+        <field name = 'res_model'>investment.land.overheads</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+        <field name = "context">{'search_default_header_id': active_id}</field>
+      </record>
+      <!--<menuitem name = "Land Overheads" id = "sale_investment_project_overheads_list" parent = "sale_investment_project_management_main_menu" action = "sale_investment_overheads_action"/>
+      -->
       <record model = 'ir.actions.act_window' id = 'sale_investments_monthly_penalty_action'>
         <field name = 'name'>Monthly Penalties</field>
         <field name = 'res_model'>sale.investment.monthly.penalty</field>
@@ -452,7 +613,7 @@
       <menuitem name = "Monthly Penalties" id = "sale_investment_monthly_penalty_list" parent = "sale_investment_periodic_activities_main_menu" action = "sale_investments_monthly_penalty_action"/>
 
        <record model = 'ir.actions.act_window' id = 'sale_investments_land_transactions_action'>
-        <field name = 'name'>Land Transactions Setup</field>
+        <field name = 'name'>Land Transactions Types</field>
         <field name = 'res_model'>investment.land.transactions</field>
         <field name = 'view_type'>form</field>
         <field name = 'view_mode'>tree,form</field>
@@ -470,6 +631,25 @@
       
       <menuitem name = "Land Transaction Costs" id = "sale_investment_land_transactions_costs" parent = "sale_investment_configuration_main_menu" action = "sale_investments_land_transaction_costs_action"/>
 
+
+      <record model = 'ir.actions.act_window' id = 'sale_investments_general_setup_action'>
+        <field name = 'name'>General Setup</field>
+        <field name = 'res_model'>sale.investment.general.setup</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "General Setup" id = "sale_investment_general_setup" parent = "sale_investment_configuration_main_menu" action = "sale_investments_general_setup_action"/>
+      
+      <record model = 'ir.actions.act_window' id = 'test_action'>
+        <field name = 'name'>Tests</field>
+        <field name = 'res_model'>test</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+      
+      <menuitem name = "Tests" id = "test_test" parent = "sale_investment_configuration_main_menu" action = "test_action"/>
+      <menuitem name = "Property by Project" id = "sale_investment_property_by_project" parent = "sale_investment_project_management_main_menu" action = "product.product_category_action"/>
 
     </data>
 </openerp>

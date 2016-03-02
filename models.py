@@ -9,23 +9,24 @@ class investor_registration(models.Model):
     no = fields.Char()
     name = fields.Char(string = 'Name')
     address = fields.Char(string = 'Address')
+    city = fields.Char()
     phone_no = fields.Char(string = 'Phone No.')
     mobile_no = fields.Char()
     email = fields.Char(string = 'Email')
     registration_date = fields.Date(default = fields.Date.today)
-    status = fields.Selection([('open',"Open"),('pending',"Pending"),('approved',"Approved"),('rejected',"Rejected")],default = 'open')
+    state = fields.Selection([('open',"Open"),('pending',"Pending"),('approved',"Approved"),('rejected',"Rejected")],default = 'open')
     date_of_birth = fields.Date(string = 'Date of Birth')
     home_address = fields.Char()
     location = fields.Char()
     sublocation = fields.Char()
     district = fields.Char()
-    payrollno = fields.Char()
-    basic_pay = fields.Float()
-    house_allowance = fields.Float()
-    other_benefits = fields.Float()
-    transport_allowance = fields.Float()
-    total_deductions = fields.Float()
-    net_income = fields.Float()
+    #payrollno = fields.Char()
+    #basic_pay = fields.Float()
+    #house_allowance = fields.Float()
+    #other_benefits = fields.Float()
+    #transport_allowance = fields.Float()
+    #total_deductions = fields.Float()
+    #net_income = fields.Float()
     idno = fields.Char() 
     passportno = fields.Char()
     marital_status = fields.Selection([('single','Single'),('married','Married')])
@@ -43,10 +44,25 @@ class investor_registration(models.Model):
     bank_account_no = fields.Char()
     member_pin = fields.Char()
     image = fields.Binary("Image",help = "Member Image")
+    created = fields.Boolean()
 
     @api.one
-    def create_member(self):
-        pass
+    def create_investor(self):
+        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+        sequence = self.env['ir.sequence'].search([('id','=',setup.investor_nos.id)])
+        investor_no = sequence.next_by_id(sequence.id, context = None)
+
+        self.env['res.partner'].create({'name':self.name,'investor':True,'phone':self.phone_no,'mobile':self.mobile_no,
+            'email':self.email,'street2':self.address,'city':self.city,'customer':True, 'investor_no':investor_no}) 
+
+        self.created = True  
+
+    @api.one
+    @api.onchange('no')
+    def get_sequence(self):
+        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+        sequence = self.env['ir.sequence'].search([('id','=',setup.investor_application_nos.id)])
+        self.no = sequence.next_by_id(sequence.id, context = None)
 
 class investor(models.Model):  
     _inherit = 'res.partner'
@@ -60,20 +76,44 @@ class investor_closure(models.Model):
     investor_no = fields.Many2one('res.partner' ,store = True , domain = [('investor','=',True)])
     image = fields.Binary(help = 'Member Image')
     closing_date = fields.Date()
-    status = fields.Selection([('open',"Open"),('pending',"Pending Approval"),('approved',"Approved"),('rejected',"Rejected")],default='open')
+    state = fields.Selection([('open',"Open"),('pending',"Pending Approval"),('approved',"Approved"),('rejected',"Rejected")],default='open')
     closed = fields.Boolean(default = False)
     closure_type = fields.Selection([('dismissal',"Summary Dismissal")])
     remarks = fields.Text()
+
+    @api.one
+    @api.onchange('no')
+    def get_sequence(self):
+        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+        sequence = self.env['ir.sequence'].search([('id','=',setup.investor_closure_nos.id)])
+        self.no = sequence.next_by_id(sequence.id, context = None)
+
+    @api.one
+    def deactivate(self):
+        investor = self.env['res.partner'].search([('id','=',self.investor_no.id)])  
+        investor.ative = False
+        self.Closed = True
 
 class investor_activation(models.Model):
     _name = 'sale.investment.investor.activation'
     no = fields.Char()
     investor_no = fields.Many2one('res.partner', store = True ,domain = [('investor','=',True)])
     activation_date = fields.Date()
-    status = fields.Selection([('open',"Open"),('pending',"Pending Approval"),('approved',"Approved"),('rejected',"Rejected")],default='open')
+    state = fields.Selection([('open',"Open"),('pending',"Pending Approval"),('approved',"Approved"),('rejected',"Rejected")],default='open')
     activated = fields.Boolean(default = False)
+
+    @api.one
+    def activate(self):
+        investor = self.env['res.partner'].search([('id','=',self.investor_no.id)])
+        investor.ative = True
+        self.Closed = True
     
-    
+    @api.one
+    @api.onchange('no')
+    def get_sequence(self):
+        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+        sequence = self.env['ir.sequence'].search([('id','=',setup.investor_activation_nos.id)])
+        self.no = sequence.next_by_id(sequence.id, context = None)
 
 class project_costing(models.Model):
     _name = 'investment.project.costing.header'
@@ -90,14 +130,18 @@ class project_costing(models.Model):
     purchase_cost = fields.Float(compute = 'compute_purchase_cost')
     total_acreage = fields.Float()
     allocation_to_ammenities = fields.Float()
-    useful_acreage = fields.Float(store = True, readonly = True)
+    useful_acreage = fields.Float()
     user_id = fields.Many2one('res.users',default=lambda self: self.env.user)
     profit_margin = fields.Float(string = "% Profit Margin")
-    state = fields.Selection([('open',"Open"),('pending',"Pending Approval"),('approved',"Approved"),('rejected',"Rejected")], default = 'open')
+    state = fields.Selection([('draft',"Draft"),('ready',"Ready")], default = 'draft')
     posted = fields.Boolean()
-    line_ids = fields.One2many('investment.project.costing.lines', 'no', ondelete = 'cascade', required = True, store = True, string = "Lines")
+    line_ids = fields.One2many('investment.project.costing.lines', 'header_id','Project Costing', copy = True)
     costing_setup_ids = fields.One2many('investment.land.transaction.costs.local','no')
     percentage_allocation = fields.Float(compute = 'compute_allocation')
+    total_land_cost = fields.Float()
+    total_overheads = fields.Float()
+    total_margin = fields.Float()
+    total_price = fields.Float()
 
     @api.onchange('total_acreage','allocation_to_ammenities')
     def compute_acreage(self):
@@ -117,9 +161,15 @@ class project_costing(models.Model):
     @api.one
     @api.depends('costing_from','vendor_quotation','vendor_invoice')
     def compute_purchase_cost(self):
-        order = self.env['purchase.order'].search([('id','=',self.vendor_quotation.id)])
+        if self.costing_from == 'quotation':
+            order = self.env['purchase.order'].search([('id','=',self.vendor_quotation.id)])
+        else:
+            order = self.env['purchase.order'].search([('id','=',self.vendor_invoice.id)])
+        
         self.purchase_cost = order.amount_total
         self.vendor = order.partner_id
+        self.total_acreage = order.order_line.product_id.total_acreage
+        self.title_deed_no = order.order_line.product_id.title_deed_no
         
             
     @api.one
@@ -127,46 +177,111 @@ class project_costing(models.Model):
     def check_allocations(self):
         if self.percentage_allocation>100:
             raise ValidationError("Your allocations exceed 100%")
+    
+
+    @api.one
+    @api.onchange('no')
+    def get_sequence(self):
+        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+        sequence = self.env['ir.sequence'].search([('id','=',setup.project_nos.id)])
+        self.no = sequence.next_by_id(sequence.id, context = None)
+
+    @api.one
+    def mark_as_ready(self):
+        if self.percentage_allocation == 100:
+            self.state = 'ready'
+        else:
+            raise ValidationError("Allocation should be 100%. Check allocation lines!")
+
+    @api.one
+    def reset_to_draft(self):
+        self.state = 'draft'
 
 class project_costing_lines(models.Model):
     _name = 'investment.project.costing.lines'   
 
-    no = fields.Char()
+    header_id = fields.Many2one('investment.project.costing.header','Lines',ondelete='cascade', select=True)
     
-    #useful_acreage = fields.Float()
-    #unit_price = fields.Float()
     unit_of_measure = fields.Selection([('acre',"Acre"),('hectare',"Hectare")])  
     size_of_plots = fields.Float()
     allocation_percentage = fields.Float()
-    no_of_plots = fields.Integer(readonly = True)
-    #total_acreage = fields.Float()
-    #useful_acreage = fields.Float()
-    land_purchase_cost = fields.Float(readonly = True)
-    land_cost_per_plot = fields.Float(readonly = True)
-    overheads = fields.Float()
-    total_cost = fields.Float(readonly = True)
-    margin = fields.Float(readonly = True)
-    price = fields.Float(readonly = True)
-    overhead_ids = fields.One2many('investment.land.overheads','no')
+    no_of_plots = fields.Integer()
+    land_purchase_cost = fields.Float()
+    land_cost_per_plot = fields.Float()
+    overheads = fields.Float(compute = 'compute_overheads')
+    total_cost = fields.Float(compute = 'compute_line_totals')
+    margin = fields.Float(compute = 'compute_line_totals')
+    price = fields.Float(compute = 'compute_line_totals')
+    price_per_plot = fields.Float(compute = 'compute_line_totals')
+    line_ids = fields.One2many('investment.land.overheads','header_id', 'Overheads', copy = True)
 
     
     @api.one
     @api.onchange('size_of_plots','allocation_percentage')
     def compute_no_of_plots(self):
         if (self.size_of_plots > 0) and (self.allocation_percentage>0):
-            project = self.env['investment.project.costing.header'].search([('id','=',self.no)])
+            no_of_plots = (self.allocation_percentage * self.header_id.useful_acreage * 0.01)/self.size_of_plots
+            land_cost = self.allocation_percentage * 0.01 * self.header_id.purchase_cost
+            self.no_of_plots = no_of_plots
+            self.land_purchase_cost = land_cost
+            #self.land_cost_per_plot = land_cost / no_of_plots
+
+    @api.one
+    @api.depends('line_ids')
+    def compute_overheads(self):
+        total = 0.0
+        for line in self.line_ids:
+            total += line.total_cost
+        self.overheads = total
+
+    @api.one
+    @api.depends('overheads','land_purchase_cost','header_id')
+    def compute_line_totals(self):
+        land_cost = 0.0
+        margin = 0.0
+
+        land_cost = self.land_purchase_cost + self.overheads
+        margin = (self.land_purchase_cost + self.overheads) * self.header_id.profit_margin * 0.01
+        price = land_cost + margin
+        if self.no_of_plots > 0:#avoid dividebyzero exception
+            price_per_plot = price / self.no_of_plots
+            self.land_cost_per_plot = land_cost / self.no_of_plots
+        else:
+            price_per_plot = 0.0
+        
+        self.total_cost = land_cost
+        self.margin = margin
+        self.price = price
+        self.price_per_plot = price_per_plot
                         
 
 class land_overheads(models.Model):
     _name = 'investment.land.overheads'
+    _rec_name = 'description'
 
-    no = fields.Many2one('investment.project.costing.header')
+    header_id = fields.Many2one('investment.project.costing.lines',ondelete = 'cascade', select = True)
     code = fields.Many2one('investment.land.transactions')
+    description = fields.Char()
     fee_charged = fields.Float()
     vat = fields.Float()
     total_cost = fields.Float()
     profit_margin = fields.Float()
     overhead_price = fields.Float(string = "Total Cost + Profit Margin")
+
+    @api.onchange('code')
+    def get_overhead_cost(self):
+        transaction = self.env['investment.land.transactions'].search([('id','=',self.code.id)])
+        self.description = transaction.description
+        
+        overhead = self.env['investment.land.transaction.costs'].search([('overhead.id','=',transaction.id)])
+        self.fee_charged = overhead.cost
+        if transaction.attracts_vat:
+            self.vat = 0.16 * self.fee_charged
+            self.total_cost = 1.16 * self.fee_charged
+        else:
+            self.total_cost = self.fee_charged
+
+
 
 class monthly_penalties(models.Model):
     _name = 'sale.investment.monthly.penalty'
@@ -194,16 +309,20 @@ class plot_transactions(models.Model):
     name = fields.Char(string = 'Code')
     description = fields.Char()
     attracts_vat = fields.Boolean()
-    attracts_margin = fields.Boolean()
+    #attracts_margin = fields.Boolean()
 
 class land_overheads_setup(models.Model):
     _name = 'investment.land.transaction.costs'
 
     overhead = fields.Many2one('investment.land.transactions')
-    description = fields.Char(readonly = True)
+    description = fields.Char()
     based_on = fields.Selection([('flat',"Flat Rate"),('percentage',"Percentage")], default = 'flat')
     percentage = fields.Float()
     cost = fields.Float()
+
+    @api.onchange('overhead')
+    def get_transaction_name(self):
+        self.description = self.env['investment.land.transactions'].search([('id','=',self.overhead.id)]).description
     
 
 class land_overheads_setup_local(models.Model):
@@ -211,6 +330,27 @@ class land_overheads_setup_local(models.Model):
     _inherit = 'investment.land.transaction.costs'
 
     no = fields.Char()
+
+class general_setup(models.Model):
+    _name = 'sale.investment.general.setup'
+
+    name = fields.Char()
+    investor_application_nos = fields.Many2one('ir.sequence')
+    investor_nos = fields.Many2one('ir.sequence')
+    investor_closure_nos = fields.Many2one('ir.sequence')
+    investor_activation_nos = fields.Many2one('ir.sequence')  
+    project_nos = fields.Many2one('ir.sequence')
+    land_asset_account = fields.Many2one('account.account')
+
+class test(models.Model):
+    _name = 'test'
+
+    field1 = fields.Char()
+    field2 = fields.Char()
+    field3 = fields.Char()
+    field4 = fields.Char()
+    field5 = fields.Char()
+    field6 = fields.Char()
 
 
 

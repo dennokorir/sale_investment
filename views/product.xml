@@ -1,0 +1,81 @@
+<!--Interface extensions for Product-->
+<openerp>
+	<data>
+		<record model = 'ir.ui.view' id = 'sale_investment_product_template_form'>
+			<field name = 'name'>Plot</field>
+			<field name = 'model'>product.template</field>
+			<field name = 'inherit_id' ref = "product.product_template_only_form_view"/>
+			<field name = 'arch' type = 'xml'>
+				<xpath expr="//page[@string='Information']" position="after">
+  					<page name="Sample" string="Plot Details">
+					    <group>
+						    <group>
+						      <field name="total_acreage"/>
+						      <field name="title_deed_no"/>
+						      <field name="ballot"/>
+						      <field name = 'sold'/>
+						    </group>
+						    <group>
+						    	
+						    </group>
+					    </group>
+				  </page>
+				</xpath>
+
+				<xpath expr="//field[@name='type']" position = "after">
+					<field name = 'product_category'/>
+				</xpath>
+			</field>
+		</record>
+		
+		<record model = 'ir.ui.view' id = 'sale_investment_product_template_tree'>
+			<field name = 'name'>Plot List</field>
+			<field name = 'model'>product.template</field>
+			<field name = 'arch' type = 'xml'>
+				<tree string = "Plot List">
+					<field name = 'default_code'/>
+					<field name = 'name'/>
+					<field name = 'categ_id'/>
+					<field name = 'state'/>
+
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="plots_search_view">
+            <field name="name">Plots Search</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <search>
+                  <field name="sold"/>
+                </search>
+            </field>
+        </record>
+
+		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_available_action'>
+			<field name = 'name'>Plots Available</field>
+			<field name = 'res_model'>product.template</field>
+			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',1),('purchase_ok','=',0)]</field>
+			<field name = 'filter' eval = "True"/>
+			<field name = 'view_type'>form</field>
+			<field name = 'view_mode'>tree,form,kanban</field>
+		</record>
+
+		<menuitem name = 'Plots List' id = 'sale_investment_plots_lists' parent = 'sale_investment_project_management_main_menu'/>
+		<menuitem name = 'Plots Available' id = 'sale_investment_plots_available_list' 
+			parent = 'sale_investment_plots_lists' action = 'sale_investment_plots_available_action'/>
+	
+		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_sold_action'>
+			<field name = 'name'>Plots Sold</field>
+			<field name = 'res_model'>product.template</field>
+			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',0),('purchase_ok','=',0)]</field>
+			
+			<field name = 'filter' eval = "True"/>
+			<field name = 'view_type'>form</field>
+			<field name = 'view_mode'>tree,form,kanban</field>
+		</record>
+
+		<menuitem name = 'Plots Sold' id = 'sale_investment_plots_sold_list' 
+			parent = 'sale_investment_plots_lists' action = 'sale_investment_plots_sold_action'/>
+	</data>
+</openerp>

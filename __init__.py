@@ -4,3 +4,4 @@ import models
 import wizard
 import product
 import account_invoice
+import partner

@@ -1,0 +1,28 @@
+<!--Extensions for Partner views-->
+<openerp>
+	<data>
+		<record model = 'ir.ui.view' id = 'sale_investment_investor_next_of_kin'>
+			<field name = 'name'>Next of Kin</field>
+			<field name = 'model'>res.partner</field>
+			<field name = 'inherit_id' ref = "base.view_partner_form"/>
+			<field name = 'arch' type = 'xml'>
+				<xpath expr="//page[@string='Internal Notes']" position="after">
+  					<page name="Additional" string="Next of Kin">
+  						<field name = 'next_of_kin_ids'>
+  							<tree editable = "bottom">
+  								<field name = 'name'/>
+  								<field name = 'relationship'/>
+  								<field name = 'beneficiary'/>
+  								<field name = 'date_of_birth'/>
+  								<field name = 'telephone'/>
+  								<field name = 'email'/>
+  								<field name = 'percentage_allocation'/>
+  							</tree>
+  						</field>
+  					</page>
+  				</xpath>
+				
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -31,7 +31,8 @@
         'views/investment_views.xml',
         'views/wizards.xml',
         'views/sequences.xml',
-        'views/product.xml'
+        'views/product.xml',
+        'views/partner.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

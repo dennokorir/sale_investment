@@ -33,7 +33,7 @@ class project_costing_wizard(models.TransientModel):
 						'state':state,'uom_id':uom_id,'qty_available':qty_available,'virtual_available':virtual_available,
 						'default_code':no,'standard_price':line.land_cost_per_plot,'list_price':line.price_per_plot,
 						'product_category':'land','sale_ok':True,'purchase_ok':False,'total_acreage':line.size_of_plots})
-					#product category is a field added to product table to identify plots
+					#product category is a field added to product table to identify plots/land
 					#self.env['test'].create({'field1':no})
 					start += 1
 

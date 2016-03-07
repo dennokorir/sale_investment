@@ -7,7 +7,7 @@
 			<field name = 'inherit_id' ref = "product.product_template_only_form_view"/>
 			<field name = 'arch' type = 'xml'>
 				<xpath expr="//page[@string='Information']" position="after">
-  					<page name="Sample" string="Plot Details">
+  					<page name="Plot" string="Plot Details">
 					    <group>
 						    <group>
 						      <field name="total_acreage"/>
@@ -42,15 +42,7 @@
 			</field>
 		</record>
 
-		<record model="ir.ui.view" id="plots_search_view">
-            <field name="name">Plots Search</field>
-            <field name="model">product.template</field>
-            <field name="arch" type="xml">
-                <search>
-                  <field name="sold"/>
-                </search>
-            </field>
-        </record>
+		
 
 		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_available_action'>
 			<field name = 'name'>Plots Available</field>

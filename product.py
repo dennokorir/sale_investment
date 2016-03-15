@@ -16,22 +16,22 @@ class product(models.Model):
 
     @api.onchange('product_category')
     def check_purchasable(self):
-    	if self.product_category == 'land':
-    		setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
-    		if not setup.land_asset_account:
-    			raise ValidationError('Land Asset Account must have a value in Investment > Configuration > General Setup')
-    		else:
-                #self.sale_ok = True
-                #purchase_ok = True
-    			self.property_account_income = setup.land_asset_account.id
-    			self.property_account_expense = setup.land_asset_account.id
-
+        if self.product_category == 'land':
+            setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+            if not setup.land_asset_account:
+                raise ValidationError('Land Asset Account must have a value in Investment > Configuration > General Setup')
+            else:
+                
+                    self.property_stock_account_input = setup.land_asset_account.id
+                    self.property_stock_account_output = setup.land_asset_account.id
+                    self.property_account_income = setup.land_income_account.id
+                    self.property_account_expense = setup.land_expense_account.id
     @api.one
     @api.depends('sale_order_line_product_ids')
     def check_if_sold(self):
-    	if self.product_category == 'land':
-    		if len(self.sale_order_line_product_ids)>0:
-    			self.sold = True
-    			self.sale_ok = False
+        if self.product_category == 'land':
+            if len(self.sale_order_line_product_ids)>0:
+                self.sold = True
+                self.sale_ok = False
 
     

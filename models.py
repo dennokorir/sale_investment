@@ -20,13 +20,6 @@ class investor_registration(models.Model):
     location = fields.Char()
     sublocation = fields.Char()
     district = fields.Char()
-    #payrollno = fields.Char()
-    #basic_pay = fields.Float()
-    #house_allowance = fields.Float()
-    #other_benefits = fields.Float()
-    #transport_allowance = fields.Float()
-    #total_deductions = fields.Float()
-    #net_income = fields.Float()
     idno = fields.Char() 
     passportno = fields.Char()
     marital_status = fields.Selection([('single','Single'),('married','Married')])
@@ -340,7 +333,9 @@ class general_setup(models.Model):
     investor_closure_nos = fields.Many2one('ir.sequence')
     investor_activation_nos = fields.Many2one('ir.sequence')  
     project_nos = fields.Many2one('ir.sequence')
-    land_asset_account = fields.Many2one('account.account')
+    land_asset_account = fields.Many2one('account.account')#stock input and stock output account
+    land_income_account = fields.Many2one('account.account')#product sales
+    land_expense_account = fields.Many2one('account.account')#cost of goods sold
 
 class test(models.Model):
     _name = 'test'

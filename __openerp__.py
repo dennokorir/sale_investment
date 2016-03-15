@@ -28,8 +28,9 @@
     'data': [
         # 'security/ir.model.access.csv',
         'templates.xml',
-        'views/investment_views.xml',
         'views/wizards.xml',
+        'views/investment_views.xml',
+
         'views/sequences.xml',
         'views/product.xml',
         'views/partner.xml'

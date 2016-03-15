@@ -1,4 +1,5 @@
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 class project_costing_wizard(models.TransientModel): 
 	_name = 'project.costing.wizard'
 
@@ -11,13 +12,23 @@ class project_costing_wizard(models.TransientModel):
 	def reclassify(self):
 		project = self.env['investment.project.costing.header'].search([('id','=',self.project_id)])
 		if len(project)>0:
+			setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+			if not (setup.land_asset_account.id and setup.land_asset_account.id and setup.land_income_account.id and setup.land_expense_account.id):
+				raise ValidationError('Ensure all options are filled in Sections under General Setup > Accounting')
+			stock_input = setup.land_asset_account.id
+			stock_output = setup.land_asset_account.id
+			stock_income = setup.land_income_account.id
+			stock_expense = setup.land_expense_account.id
+			valuation = 'real_time'
+
+
 			product_category = self.env['product.category'].create({'name':self.project_no,'parent_id':1,'type':'normal'})
 			#all product fields will be the same except internal reference
 			#internal reference will use number series.
 			#NB: Internal Reference === default_code
 			name = self.project_name
 			categ_id = product_category.id
-			product_type = 'consu'
+			product_type = 'product'   #product -->this should be the correct one to imply stock
 			state = 'sellable'
 			uom_id = 1
 			qty_available = 1
@@ -25,6 +36,7 @@ class project_costing_wizard(models.TransientModel):
 			active = True
 			no = ''
 			start = 1
+
 			for line in project.line_ids:
 				end = line.no_of_plots + start
 				for plot in range(start, end):
@@ -32,7 +44,9 @@ class project_costing_wizard(models.TransientModel):
 					self.env['product.template'].create({'name':name,'categ_id':categ_id,'type':product_type,
 						'state':state,'uom_id':uom_id,'qty_available':qty_available,'virtual_available':virtual_available,
 						'default_code':no,'standard_price':line.land_cost_per_plot,'list_price':line.price_per_plot,
-						'product_category':'land','sale_ok':True,'purchase_ok':False,'total_acreage':line.size_of_plots})
+						'product_category':'land','sale_ok':True,'purchase_ok':False,'total_acreage':line.size_of_plots,
+						'valuation':valuation,'property_stock_account_input':stock_input,'property_stock_account_output':stock_output,
+						'property_account_income':stock_income,'property_account_expense':stock_expense})
 					#product category is a field added to product table to identify plots/land
 					#self.env['test'].create({'field1':no})
 					start += 1

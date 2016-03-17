@@ -290,7 +290,7 @@
         <field name = 'model'>investment.land.overheads</field>
         <field name = 'arch' type = 'xml'>
           <tree editable = "bottom">
-            <field name = 'header_id'/>
+            <!--<field name = 'header_id'/>-->
             <field name = 'code'/>
             <field name = 'description'/>
             <field name = 'fee_charged' sum = "fee_charged"/>
@@ -452,12 +452,27 @@
                </page>
                <page string = 'Accounting'>
                  <group>
-                   <group>
+                   <group string = 'Regular Accounts'>
                      <field name = 'land_asset_account'/>
                      <field name = 'land_income_account'/>
                      <field name = 'land_expense_account'/>
                    </group>
-                   <group></group>
+                   <group string = "Control Accounts">
+                     <field name = 'land_input_account'/>
+                     <field name = 'land_output_account'/>
+                   </group>
+                 </group>
+               </page>
+               <page string = 'Project Costing'>
+                 <group>
+                   <group string = 'Incoming'>
+                     <field name = 'inbound_from_location'/>
+                     <field name = 'inbound_to_location'/>
+                   </group>
+                   <group string = 'Outgoing'>
+                     <field name = 'outbound_from_location'/>
+                      <field name = 'outbound_to_location'/>
+                   </group>
                  </group>
                </page>
              </notebook>
@@ -635,9 +650,9 @@
         <field name = 'view_type'>form</field>
         <field name = 'view_mode'>tree,form</field>
       </record>
-
+      <!--
       <menuitem name = "Tests" id = "test_test" parent = "sale_investment_configuration_main_menu" action = "test_action"/>
       <menuitem name = "Property by Project" id = "sale_investment_property_by_project" parent = "sale_investment_project_management_main_menu" action = "product.product_category_action" sequence = '20'/>
-
+      -->
     </data>
 </openerp>

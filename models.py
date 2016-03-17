@@ -20,7 +20,7 @@ class investor_registration(models.Model):
     location = fields.Char()
     sublocation = fields.Char()
     district = fields.Char()
-    idno = fields.Char() 
+    idno = fields.Char()
     passportno = fields.Char()
     marital_status = fields.Selection([('single','Single'),('married','Married')])
     gender = fields.Selection([('male','Male'),('female','Female')])
@@ -46,9 +46,9 @@ class investor_registration(models.Model):
         investor_no = sequence.next_by_id(sequence.id, context = None)
 
         self.env['res.partner'].create({'name':self.name,'investor':True,'phone':self.phone_no,'mobile':self.mobile_no,
-            'email':self.email,'street2':self.address,'city':self.city,'customer':True, 'investor_no':investor_no}) 
+            'email':self.email,'street2':self.address,'city':self.city,'customer':True, 'investor_no':investor_no})
 
-        self.created = True  
+        self.created = True
 
     @api.one
     @api.onchange('no')
@@ -57,7 +57,7 @@ class investor_registration(models.Model):
         sequence = self.env['ir.sequence'].search([('id','=',setup.investor_application_nos.id)])
         self.no = sequence.next_by_id(sequence.id, context = None)
 
-class investor(models.Model):  
+class investor(models.Model):
     _inherit = 'res.partner'
 
     investor = fields.Boolean()
@@ -83,7 +83,7 @@ class investor_closure(models.Model):
 
     @api.one
     def deactivate(self):
-        investor = self.env['res.partner'].search([('id','=',self.investor_no.id)])  
+        investor = self.env['res.partner'].search([('id','=',self.investor_no.id)])
         investor.ative = False
         self.Closed = True
 
@@ -100,7 +100,7 @@ class investor_activation(models.Model):
         investor = self.env['res.partner'].search([('id','=',self.investor_no.id)])
         investor.ative = True
         self.Closed = True
-    
+
     @api.one
     @api.onchange('no')
     def get_sequence(self):
@@ -158,19 +158,19 @@ class project_costing(models.Model):
             order = self.env['purchase.order'].search([('id','=',self.vendor_quotation.id)])
         else:
             order = self.env['purchase.order'].search([('id','=',self.vendor_invoice.id)])
-        
+
         self.purchase_cost = order.amount_total
         self.vendor = order.partner_id
         self.total_acreage = order.order_line.product_id.total_acreage
         self.title_deed_no = order.order_line.product_id.title_deed_no
-        
-            
+
+
     @api.one
     @api.constrains('percentage_allocation')
     def check_allocations(self):
         if self.percentage_allocation>100:
             raise ValidationError("Your allocations exceed 100%")
-    
+
 
     @api.one
     @api.onchange('no')
@@ -191,11 +191,11 @@ class project_costing(models.Model):
         self.state = 'draft'
 
 class project_costing_lines(models.Model):
-    _name = 'investment.project.costing.lines'   
+    _name = 'investment.project.costing.lines'
 
     header_id = fields.Many2one('investment.project.costing.header','Lines',ondelete='cascade', select=True)
-    
-    unit_of_measure = fields.Selection([('acre',"Acre"),('hectare',"Hectare")])  
+
+    unit_of_measure = fields.Selection([('acre',"Acre"),('hectare',"Hectare")])
     size_of_plots = fields.Float()
     allocation_percentage = fields.Float()
     no_of_plots = fields.Integer()
@@ -208,7 +208,7 @@ class project_costing_lines(models.Model):
     price_per_plot = fields.Float(compute = 'compute_line_totals')
     line_ids = fields.One2many('investment.land.overheads','header_id', 'Overheads', copy = True)
 
-    
+
     @api.one
     @api.onchange('size_of_plots','allocation_percentage')
     def compute_no_of_plots(self):
@@ -241,12 +241,12 @@ class project_costing_lines(models.Model):
             self.land_cost_per_plot = land_cost / self.no_of_plots
         else:
             price_per_plot = 0.0
-        
+
         self.total_cost = land_cost
         self.margin = margin
         self.price = price
         self.price_per_plot = price_per_plot
-                        
+
 
 class land_overheads(models.Model):
     _name = 'investment.land.overheads'
@@ -265,7 +265,7 @@ class land_overheads(models.Model):
     def get_overhead_cost(self):
         transaction = self.env['investment.land.transactions'].search([('id','=',self.code.id)])
         self.description = transaction.description
-        
+
         overhead = self.env['investment.land.transaction.costs'].search([('overhead.id','=',transaction.id)])
         self.fee_charged = overhead.cost
         if transaction.attracts_vat:
@@ -294,7 +294,7 @@ class monthly_penalty_lines(models.Model):
     invoice_no = fields.Char()
     invoice_amount = fields.Float()
     monthly_amount = fields.Float()
-    
+
 
 class plot_transactions(models.Model):
     _name = 'investment.land.transactions'
@@ -316,7 +316,7 @@ class land_overheads_setup(models.Model):
     @api.onchange('overhead')
     def get_transaction_name(self):
         self.description = self.env['investment.land.transactions'].search([('id','=',self.overhead.id)]).description
-    
+
 
 class land_overheads_setup_local(models.Model):
     _name = 'investment.land.transaction.costs.local'
@@ -331,11 +331,17 @@ class general_setup(models.Model):
     investor_application_nos = fields.Many2one('ir.sequence')
     investor_nos = fields.Many2one('ir.sequence')
     investor_closure_nos = fields.Many2one('ir.sequence')
-    investor_activation_nos = fields.Many2one('ir.sequence')  
+    investor_activation_nos = fields.Many2one('ir.sequence')
     project_nos = fields.Many2one('ir.sequence')
     land_asset_account = fields.Many2one('account.account')#stock input and stock output account
     land_income_account = fields.Many2one('account.account')#product sales
     land_expense_account = fields.Many2one('account.account')#cost of goods sold
+    inbound_from_location = fields.Many2one('stock.location')
+    inbound_to_location = fields.Many2one('stock.location')
+    outbound_from_location = fields.Many2one('stock.location')
+    outbound_to_location = fields.Many2one('stock.location')
+    land_input_account = fields.Many2one('account.account')
+    land_output_account = fields.Many2one('account.account')
 
 class test(models.Model):
     _name = 'test'

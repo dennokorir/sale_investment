@@ -21,11 +21,13 @@ class product(models.Model):
             if not setup.land_asset_account:
                 raise ValidationError('Land Asset Account must have a value in Investment > Configuration > General Setup')
             else:
-                
-                    self.property_stock_account_input = setup.land_asset_account.id
-                    self.property_stock_account_output = setup.land_asset_account.id
+
+                    self.property_stock_account_input = setup.land_input_account.id
+                    self.property_stock_account_output = setup.land_output_account.id
                     self.property_account_income = setup.land_income_account.id
                     self.property_account_expense = setup.land_expense_account.id
+                    self.valuation = 'real_time'
+                    self.cost_method = 'real'
     @api.one
     @api.depends('sale_order_line_product_ids')
     def check_if_sold(self):
@@ -34,4 +36,4 @@ class product(models.Model):
                 self.sold = True
                 self.sale_ok = False
 
-    
+

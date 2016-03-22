@@ -70,8 +70,12 @@ class project_costing_wizard(models.TransientModel):
 				for line in project.vendor_quotation.order_line.product_id:
 					line.sale_ok = False
 					line.purchase_ok = False
+					#remove from stock
+					self.env['stock.quant'].create({'product_id':line.id,'qty':-1,'location_id':setup.inbound_to_location.id,'company_id':1})
 			else:
 				for line in project.vendor_quotation.order_line.product_id:
 					line.sale_ok = False
 					line.purchase_ok = False
+					#remove from stock
+					self.env['stock.quant'].create({'product_id':line.id,'qty':-1,'location_id':setup.inbound_to_location.id,'company_id':1})
 

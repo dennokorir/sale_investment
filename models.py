@@ -129,7 +129,7 @@ class project_costing(models.Model):
     state = fields.Selection([('draft',"Draft"),('ready',"Ready")], default = 'draft')
     posted = fields.Boolean()
     line_ids = fields.One2many('investment.project.costing.lines', 'header_id','Project Costing', copy = True)
-    costing_setup_ids = fields.One2many('investment.land.transaction.costs.local','no')
+    costing_setup_ids = fields.One2many('investment.land.transaction.costs.local','project_id')
     percentage_allocation = fields.Float(compute = 'compute_allocation')
     total_land_cost = fields.Float()
     total_overheads = fields.Float()
@@ -198,7 +198,10 @@ class project_costing_lines(models.Model):
     unit_of_measure = fields.Selection([('acre',"Acre"),('hectare',"Hectare")])
     size_of_plots = fields.Float()
     allocation_percentage = fields.Float()
+    acreage_to_use = fields.Float()
     no_of_plots = fields.Integer()
+    acreage_used = fields.Float()
+    acreage_balance = fields.Float()
     land_purchase_cost = fields.Float()
     land_cost_per_plot = fields.Float()
     overheads = fields.Float(compute = 'compute_overheads')
@@ -218,6 +221,8 @@ class project_costing_lines(models.Model):
             self.no_of_plots = no_of_plots
             self.land_purchase_cost = land_cost
             #self.land_cost_per_plot = land_cost / no_of_plots
+            self.acreage_used = self.size_of_plots * self.no_of_plots
+            self.acreage_balance = (self.allocation_percentage * self.header_id.useful_acreage * 0.01)%self.size_of_plots
 
     @api.one
     @api.depends('line_ids')
@@ -322,7 +327,7 @@ class land_overheads_setup_local(models.Model):
     _name = 'investment.land.transaction.costs.local'
     _inherit = 'investment.land.transaction.costs'
 
-    no = fields.Char()
+    project_id = fields.Many2one('investment.project.costing.header')
 
 class general_setup(models.Model):
     _name = 'sale.investment.general.setup'

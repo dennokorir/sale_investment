@@ -44,7 +44,7 @@ class project_costing_wizard(models.TransientModel):
 			for line in project.line_ids:
 				end = line.no_of_plots + start
 				for plot in range(start, end):
-					no = self.numbering_prefix.upper() + str(plot)
+					no = self.numbering_prefix.upper() + str(plot).zfill(4)
 					land_parcel = self.env['product.template'].create({'name':name,'categ_id':categ_id,'type':product_type,
 						'state':state,'uom_id':uom_id,'qty_available':qty_available,'virtual_available':virtual_available,
 						'default_code':no,'standard_price':line.land_cost_per_plot,'list_price':line.price_per_plot,

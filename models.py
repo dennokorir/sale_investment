@@ -124,6 +124,8 @@ class project_costing(models.Model):
     total_acreage = fields.Float()
     allocation_to_ammenities = fields.Float()
     useful_acreage = fields.Float()
+    allocated = fields.Float(compute = 'compute_allocation')
+    unallocated = fields.Float(compute = 'compute_allocation')
     user_id = fields.Many2one('res.users',default=lambda self: self.env.user)
     profit_margin = fields.Float(string = "% Profit Margin")
     state = fields.Selection([('draft',"Draft"),('ready',"Ready")], default = 'draft')
@@ -146,10 +148,23 @@ class project_costing(models.Model):
     @api.one
     @api.depends('line_ids')
     def compute_allocation(self):
+        '''
         total = 0
         for line in self.line_ids:
             total += line.allocation_percentage
         self.percentage_allocation = total
+        '''
+        if self.useful_acreage > 0:
+            total = 0.0
+            total_allocated = 0.0
+            total_unallocated = self.useful_acreage
+            for line in self.line_ids:
+                #total += line.acreage_to_use
+                total_allocated += (line.acreage_to_use//line.size_of_plots)*line.size_of_plots
+
+            self.percentage_allocation = (total_allocated/self.useful_acreage)*100
+            self.allocated = total_allocated
+            self.unallocated = self.useful_acreage - total_allocated
 
     @api.one
     @api.depends('costing_from','vendor_quotation','vendor_invoice')
@@ -190,6 +205,8 @@ class project_costing(models.Model):
     def reset_to_draft(self):
         self.state = 'draft'
 
+
+
 class project_costing_lines(models.Model):
     _name = 'investment.project.costing.lines'
 
@@ -200,7 +217,7 @@ class project_costing_lines(models.Model):
     allocation_percentage = fields.Float()
     acreage_to_use = fields.Float()
     no_of_plots = fields.Integer()
-    acreage_used = fields.Float()
+    #acreage_used = fields.Float()
     acreage_balance = fields.Float()
     land_purchase_cost = fields.Float()
     land_cost_per_plot = fields.Float()
@@ -213,16 +230,18 @@ class project_costing_lines(models.Model):
 
 
     @api.one
-    @api.onchange('size_of_plots','allocation_percentage')
+    @api.onchange('size_of_plots','acreage_to_use')
     def compute_no_of_plots(self):
-        if (self.size_of_plots > 0) and (self.allocation_percentage>0):
-            no_of_plots = (self.allocation_percentage * self.header_id.useful_acreage * 0.01)/self.size_of_plots
-            land_cost = self.allocation_percentage * 0.01 * self.header_id.purchase_cost
+        if (self.size_of_plots > 0) and (self.acreage_to_use>0):
+            #no_of_plots = (self.allocation_percentage * self.header_id.useful_acreage * 0.01)/self.size_of_plots
+            no_of_plots = self.acreage_to_use / self.size_of_plots
+            #land_cost = self.allocation_percentage * 0.01 * self.header_id.purchase_cost
+            land_cost = ((self.acreage_to_use -(self.acreage_to_use % self.size_of_plots)) / self.header_id.useful_acreage) * self.header_id.purchase_cost
             self.no_of_plots = no_of_plots
             self.land_purchase_cost = land_cost
-            #self.land_cost_per_plot = land_cost / no_of_plots
-            self.acreage_used = self.size_of_plots * self.no_of_plots
-            self.acreage_balance = (self.allocation_percentage * self.header_id.useful_acreage * 0.01)%self.size_of_plots
+            self.land_cost_per_plot = land_cost / no_of_plots
+            #self.acreage_used = self.size_of_plots * self.no_of_plots
+            self.acreage_balance = self.acreage_to_use % self.size_of_plots
 
     @api.one
     @api.depends('line_ids')

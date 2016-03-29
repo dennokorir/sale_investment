@@ -246,6 +246,8 @@
     							<field name = 'total_acreage'/>
     							<field name = 'allocation_to_ammenities'/>
     							<field name = 'useful_acreage'/>
+                  <field name = 'allocated'/>
+                  <field name = 'unallocated'/>
     							<field name = 'user_id'/>
 
     							<field name = 'posted'/>
@@ -261,14 +263,15 @@
 
                       <field name = 'unit_of_measure'/>
                       <field name = 'size_of_plots'/>
-                      <field name = 'allocation_percentage'/>
+                      <field name = 'acreage_to_use'/>
+                      <!--<field name = 'allocation_percentage'/>-->
                       <field name = 'no_of_plots'/>
-                      <field name = 'land_purchase_cost'/>
-                      <field name = 'overheads'/>
+                      <field name = 'land_purchase_cost' sum = "land_purchase_cost"/>
+                      <field name = 'overheads' sum = "overheads"/>
                       <button name = '%(sale_investment_overheads_action)d' type = 'action'
                        context="{'default_header_id':active_id}" icon="gtk-execute"/>
                       <field name = 'total_cost'/>
-                      <field name = 'margin'/>
+                      <field name = 'margin' sum = "margin"/>
                       <field name = 'price'/>
                       <field name = 'land_cost_per_plot'/>
                       <field name = 'price_per_plot'/>

@@ -126,7 +126,7 @@
         </field>
       </record>
 
-
+    <!--
 		<record model = 'ir.ui.view' id = 'sale_investment_investor_form'>
 			<field name = 'name'>Investor Form</field>
 			<field name = 'model'>res.partner</field>
@@ -137,7 +137,7 @@
 	    		</xpath>
 			</field>
 		</record>
-
+    -->
 		<record model = 'ir.ui.view' id = 'sale_investment_investor_tree'>
 			<field name = 'name'>Investor Card</field>
 			<field name = 'model'>res.partner</field>
@@ -220,6 +220,7 @@
                        context="{'default_project_id':id, 'default_project_no':no, 'default_project_name':name}" string = 'Allotment' class = 'oe_highlight' states = "ready"/>
               <button name = "reset_to_draft" type = "object" string = "Reset to Draft" class = "oe_highlight" states = "ready"/>
               <button name = "mark_as_ready" type = "object" string = "Mark as Ready" class = "oe_highlight" states = "draft"/>
+              <button name = 'create_draft_invoices' type = 'object' string = "Create Overhead Invoices"/>
               <field name = 'state' widget = 'statusbar'/>
             </header>
     				<sheet>
@@ -278,6 +279,18 @@
                    </tree>
                   </field>
 
+                </page>
+                <page string = 'Overheads Summary'>
+                  <field name= 'overhead_summary_ids'>
+                    <tree>
+
+                      <!--<field name = 'code'/>-->
+                      <field name = 'description'/>
+                      <field name = 'fee_charged'/>
+                      <field name = 'vat'/>
+                      <field name = 'total_cost'/>
+                    </tree>
+                  </field>
                 </page>
               </notebook>
 
@@ -511,6 +524,8 @@
                    <group string = "Control Accounts">
                      <field name = 'land_input_account'/>
                      <field name = 'land_output_account'/>
+                     <field name = 'provisions_for_overheads'/>
+                     <field name = 'provisional_vendor'/>
                    </group>
                  </group>
                </page>
@@ -703,7 +718,8 @@
       </record>
       <!--
       <menuitem name = "Tests" id = "test_test" parent = "sale_investment_configuration_main_menu" action = "test_action"/>
+    -->
       <menuitem name = "Property by Project" id = "sale_investment_property_by_project" parent = "sale_investment_project_management_main_menu" action = "product.product_category_action" sequence = '20'/>
-      -->
+
     </data>
 </openerp>

@@ -79,3 +79,31 @@ class project_costing_wizard(models.TransientModel):
 					#remove from stock
 					self.env['stock.quant'].create({'product_id':line.id,'qty':-1,'location_id':setup.inbound_to_location.id,'company_id':1})
 
+
+
+			#start posting routine for overheads
+			#date
+	        today = datetime.now().strftime("%Y/%m/%d")
+	        journal = self.env['account.journal'].search([('id','=',1)]) #get journal id
+	        #period
+	        period = self.env['account.period'].search([('state','=','draft'),('date_start','<',today),('date_stop','>',today)])
+	        period_id = period.id
+
+	        journal_header = self.env['account.move']#reference to journal entry
+	        move = journal_header.create({'journal_id':journal.id,'period_id':period_id,'state':'draft','name':self.project_no,
+	            'date':today})
+	        move_id = move.id
+
+	        #create journal lines
+	        journal_lines = self.env['account.move.line']
+
+	        #setup
+	        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+
+	        dr = setup.land_asset_account.id
+	        cr = setup.provisions_for_overheads.id
+	        project = self.env['investment.project.costing.header'].search([('id','=',self.project_id)])
+
+	        for line in project.overhead_summary_ids:
+	            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Project Overheads::' + line.description, 'account_id':dr,'move_id':move_id,'debit':line.total_cost})
+	            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Project Overheads::' + line.description, 'account_id':cr,'move_id':move_id,'credit':line.total_cost})

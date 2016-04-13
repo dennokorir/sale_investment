@@ -56,13 +56,13 @@ class investor_registration(models.Model):
         setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
         sequence = self.env['ir.sequence'].search([('id','=',setup.investor_application_nos.id)])
         self.no = sequence.next_by_id(sequence.id, context = None)
-
+'''
 class investor(models.Model):
     _inherit = 'res.partner'
 
     investor = fields.Boolean()
     investor_no = fields.Char()
-
+'''
 class investor_closure(models.Model):
     _name = 'sale.investment.investor.closure'
     no = fields.Char()
@@ -137,6 +137,7 @@ class project_costing(models.Model):
     total_overheads = fields.Float()
     total_margin = fields.Float()
     total_price = fields.Float()
+    overhead_summary_ids = fields.One2many('sale.investment.overheads.summary','header_id')
 
     @api.onchange('total_acreage','allocation_to_ammenities')
     def compute_acreage(self):
@@ -196,6 +197,30 @@ class project_costing(models.Model):
 
     @api.one
     def mark_as_ready(self):
+        self.overhead_summary_ids.unlink()
+        transactions = self.env['investment.land.transactions'].search([])
+        for transaction in transactions:
+            code = ''
+            description = ''
+            fee_charged = 0.0
+            vat = 0.0
+            total_cost = 0.0
+            for line in self.line_ids:
+                for overhead in line.line_ids:
+                    #summary = self.env['investment.land.overheads'].search([('id','=',transaction.id),('header_id','=',line.id)])
+                    if overhead.code.id == transaction.id:
+
+                        code = transaction.id
+                        description = transaction.description
+                        fee_charged += overhead.fee_charged
+                        vat += overhead.vat
+                        total_cost += overhead.total_cost
+            if total_cost>0:
+                self.env['sale.investment.overheads.summary'].create({'header_id':self.id,'code':code,'fee_charged':fee_charged,'vat':vat,
+                    'total_cost':total_cost,'description':description})
+
+
+        #now mark as ready
         if self.percentage_allocation == 100:
             self.state = 'ready'
         else:
@@ -205,6 +230,14 @@ class project_costing(models.Model):
     def reset_to_draft(self):
         self.state = 'draft'
 
+    @api.one
+    def create_draft_invoices(self):
+        setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+        if self.state == 'ready' and self.posted == True:
+            for line in self.overhead_summary_ids:
+                invoice = self.env['account.invoice'].create({'partner_id':setup.provisional_vendor.id,'state':'draft','account_id':setup.provisional_vendor.property_account_payable.id,'name':'Draft Overheads Invoice',
+                    'type':'in_invoice'})
+                self.env['account.invoice.line'].create({'invoice_id':invoice.id,'account_id':setup.provisions_for_overheads.id,'name':'Project Overheads::'+line.description,'quantity':1,'price_unit':line.total_cost})
 
 
 class project_costing_lines(models.Model):
@@ -285,6 +318,7 @@ class land_overheads(models.Model):
     profit_margin = fields.Float()
     overhead_price = fields.Float(string = "Total Cost + Profit Margin")
 
+
     @api.onchange('code')
     def get_overhead_cost(self):
         transaction = self.env['investment.land.transactions'].search([('id','=',self.code.id)])
@@ -298,6 +332,15 @@ class land_overheads(models.Model):
         else:
             self.total_cost = self.fee_charged
 
+class overheads_summary(models.Model):
+    _name = 'sale.investment.overheads.summary'
+
+    header_id = fields.Many2one('investment.project.costing.header')
+    code = fields.Char()
+    description = fields.Char()
+    fee_charged = fields.Float()
+    vat = fields.Float()
+    total_cost = fields.Float()
 
 
 class monthly_penalties(models.Model):
@@ -366,6 +409,8 @@ class general_setup(models.Model):
     outbound_to_location = fields.Many2one('stock.location')
     land_input_account = fields.Many2one('account.account')
     land_output_account = fields.Many2one('account.account')
+    provisions_for_overheads = fields.Many2one('account.account')
+    provisional_vendor = fields.Many2one('res.partner', domain = [('supplier','=',True)])
 
 class test(models.Model):
     _name = 'test'

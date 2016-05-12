@@ -23,7 +23,7 @@
                 <group string = 'Important'>
                   <field name  = 'idno' />
                   <field name  = 'passportno' />
-                  <field name = 'member_pin' />
+                  <field name = 'investor_pin' />
                   <field name  = 'marital_status' />
                   <field name  = 'gender' />
                   <field name  = 'occupation' />
@@ -319,7 +319,7 @@
         <field name = 'model'>investment.land.overheads</field>
         <field name = 'arch' type = 'xml'>
           <tree editable = "bottom">
-            <!--<field name = 'header_id'/>-->
+            <field name = 'header_id'/>
             <field name = 'code'/>
             <field name = 'description'/>
             <field name = 'fee_charged' sum = "fee_charged"/>

@@ -10,8 +10,8 @@ class investor_registration(models.Model):
     name = fields.Char(string = 'Name')
     address = fields.Char(string = 'Address')
     city = fields.Char()
-    phone_no = fields.Char(string = 'Phone No.')
-    mobile_no = fields.Char()
+    phone_no = fields.Char(string = 'Phone No.', required = True)
+    mobile_no = fields.Char(required = True)
     email = fields.Char(string = 'Email')
     registration_date = fields.Date(default = fields.Date.today)
     state = fields.Selection([('open',"Open"),('pending',"Pending"),('approved',"Approved"),('rejected',"Rejected")],default = 'open')
@@ -20,7 +20,7 @@ class investor_registration(models.Model):
     location = fields.Char()
     sublocation = fields.Char()
     district = fields.Char()
-    idno = fields.Char()
+    idno = fields.Char(required = True)
     passportno = fields.Char()
     marital_status = fields.Selection([('single','Single'),('married','Married')])
     gender = fields.Selection([('male','Male'),('female','Female')])
@@ -35,9 +35,11 @@ class investor_registration(models.Model):
     approved_by = fields.Char()
     bank_name = fields.Char()
     bank_account_no = fields.Char()
-    member_pin = fields.Char()
+    investor_pin = fields.Char()
     image = fields.Binary("Image",help = "Member Image")
     created = fields.Boolean()
+    is_company = fields.Boolean()
+    is_group = fields.Boolean()
 
     @api.one
     def create_investor(self):
@@ -46,7 +48,9 @@ class investor_registration(models.Model):
         investor_no = sequence.next_by_id(sequence.id, context = None)
 
         self.env['res.partner'].create({'name':self.name,'investor':True,'phone':self.phone_no,'mobile':self.mobile_no,
-            'email':self.email,'street2':self.address,'city':self.city,'customer':True, 'investor_no':investor_no})
+            'email':self.email,'street2':self.address,'city':self.city,'customer':True, 'investor_no':investor_no,'dob':self.date_of_birth,
+            'idno':self.idno,'passport_no':self.passportno,'investor_pin':self.investor_pin,'marital_status':self.marital_status,'gender':self.gender,
+            'occupation':self.occupation})
 
         self.created = True
 
@@ -112,7 +116,7 @@ class project_costing(models.Model):
     _name = 'investment.project.costing.header'
 
     no = fields.Char()
-    name = fields.Char()
+    name = fields.Char(required = True)
     description = fields.Char()
     date = fields.Date(default = fields.Date.today())
     title_deed_no = fields.Char()
@@ -253,7 +257,7 @@ class project_costing_lines(models.Model):
     #acreage_used = fields.Float()
     acreage_balance = fields.Float()
     land_purchase_cost = fields.Float()
-    land_cost_per_plot = fields.Float()
+    land_cost_per_plot = fields.Float(compute = 'compute_line_totals')
     overheads = fields.Float(compute = 'compute_overheads')
     total_cost = fields.Float(compute = 'compute_line_totals')
     margin = fields.Float(compute = 'compute_line_totals')

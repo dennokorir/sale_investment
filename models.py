@@ -32,14 +32,18 @@ class investor_registration(models.Model):
     contact_person_phone_no = fields.Char()
     contact_person_relation = fields.Selection([('kin','Kin'),('relative','Relative'),('friend','Friend')])
     recruited_by = fields.Char()
+    sales_person = fields.Many2one('res.partner', string = 'Recruited By')
     approved_by = fields.Char()
     bank_name = fields.Char()
     bank_account_no = fields.Char()
     investor_pin = fields.Char()
     image = fields.Binary("Image",help = "Member Image")
     created = fields.Boolean()
-    is_company = fields.Boolean()
-    is_group = fields.Boolean()
+    investor_type = fields.Selection([('individual',"Individual"),('group',"Group"),('company',"Company")])
+    company_registration = fields.Char(string = 'Company/Group Registration')
+    company_registration_date = fields.Date(string = 'Company/Group Registration Date')
+    investor_group_ids = fields.One2many('sale.investment.invetor.group','investor_app_id')
+    next_of_kin_ids = fields.One2many('next.of.kin','investor_app_id')
 
     @api.one
     def create_investor(self):
@@ -47,10 +51,14 @@ class investor_registration(models.Model):
         sequence = self.env['ir.sequence'].search([('id','=',setup.investor_nos.id)])
         investor_no = sequence.next_by_id(sequence.id, context = None)
 
-        self.env['res.partner'].create({'name':self.name,'investor':True,'phone':self.phone_no,'mobile':self.mobile_no,
+        investor = self.env['res.partner'].create({'name':self.name,'investor':True,'phone':self.phone_no,'mobile':self.mobile_no,
             'email':self.email,'street2':self.address,'city':self.city,'customer':True, 'investor_no':investor_no,'dob':self.date_of_birth,
             'idno':self.idno,'passport_no':self.passportno,'investor_pin':self.investor_pin,'marital_status':self.marital_status,'gender':self.gender,
             'occupation':self.occupation})
+
+        #write ids to next of kin table to transfer view to member table
+        for kin in self.next_of_kin_ids:
+            kin.investor_id = investor.id
 
         self.created = True
 
@@ -60,13 +68,17 @@ class investor_registration(models.Model):
         setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
         sequence = self.env['ir.sequence'].search([('id','=',setup.investor_application_nos.id)])
         self.no = sequence.next_by_id(sequence.id, context = None)
-'''
-class investor(models.Model):
-    _inherit = 'res.partner'
 
-    investor = fields.Boolean()
-    investor_no = fields.Char()
-'''
+class investment_group(models.Model):
+    _name = 'sale.investment.invetor.group'
+
+    name = fields.Char()
+    idno = fields.Char()
+    phone = fields.Char()
+    email = fields.Char()
+    investor_app_id = fields.Many2one('sale.investor.registration')
+    investor_id = fields.Many2one('res.partner')
+
 class investor_closure(models.Model):
     _name = 'sale.investment.investor.closure'
     no = fields.Char()

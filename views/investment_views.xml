@@ -14,27 +14,33 @@
             <group>
                 <group string = 'General'>
                   <field name  = 'no' />
+                  <field name = 'designation'/>
                   <field name  = 'name' />
+                  <field name = 'investor_type'/>
                   <field name  = 'registration_date' />
-                  <field name  = 'date_of_birth' />
-
+                  <field name = 'created'/>
 
                 </group>
                 <group string = 'Important'>
-                  <field name  = 'idno' />
-                  <field name  = 'passportno' />
-                  <field name = 'investor_pin' />
-                  <field name  = 'marital_status' />
-                  <field name  = 'gender' />
-                  <field name  = 'occupation' />
-                  <field name  = 'designation' />
-                  <field name = 'created'/>
+                  <field name  = 'date_of_birth'/>
+                  <field name = 'idno'/>
+                  <field name = 'passportno'/>
+                  <!--<field name = 'investor_pin'/>
+                  <field name = 'marital_status'/>-->
+                  <field name = 'gender'/>
+                  <field name = 'occupation'/>
+
+                  <!--details specific to a company/group-->
+                  <field name = 'company_registration'/>
+                  <field name = 'company_registration_date'/>
+
                 </group>
                 <group string = 'Additional'>
-                  <field name = 'recruited_by' />
-                  <field name = 'approved_by' />
-                  <field name = 'bank_account_no' />
-                  <field name = 'bank_name' />
+                  <field name = 'recruited_by'/>
+                  <!--<field name = 'sales_person'/>-->
+                  <field name = 'approved_by'/>
+                  <field name = 'bank_account_no'/>
+                  <field name = 'bank_name'/>
                 </group>
             </group>
                <notebook>
@@ -55,8 +61,29 @@
                       <field name  = 'district' />
                     </group>
                   </group>
-
-
+                </page>
+                <page string = "Group Members">
+                  <field name = 'investor_group_ids'>
+                    <tree>
+                      <field name = 'name'/>
+                      <field name = 'idno'/>
+                      <field name = 'phone'/>
+                      <field name = 'email'/>
+                    </tree>
+                  </field>
+                </page>
+                <page string = "Next of Kin">
+                  <field name = 'next_of_kin_ids'>
+                    <tree editable = "bottom">
+                      <field name = 'name'/>
+                      <field name = 'relationship'/>
+                      <field name = 'beneficiary'/>
+                      <field name = 'date_of_birth'/>
+                      <field name = 'telephone'/>
+                      <field name = 'email'/>
+                      <field name = 'percentage_allocation'/>
+                    </tree>
+                  </field>
                 </page>
 
                </notebook>

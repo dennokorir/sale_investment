@@ -13,10 +13,13 @@
 						      <field name="total_acreage"/>
 						      <field name="title_deed_no"/>
 						      <field name="ballot"/>
-						      <field name = 'sold'/>
+						      <field name='sold'/>
+
 						    </group>
 						    <group>
-
+						    	<field name = 'status'/>
+						    	<field name = 'sales_person'/>
+						    	<field name = 'customer'/>
 						    </group>
 					    </group>
 				  </page>
@@ -47,7 +50,7 @@
 		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_available_action'>
 			<field name = 'name'>Plots Available</field>
 			<field name = 'res_model'>product.template</field>
-			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',1),('purchase_ok','=',0)]</field>
+			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',1),('purchase_ok','=',0),('status','=','available')]</field>
 			<field name = 'filter' eval = "True"/>
 			<field name = 'view_type'>form</field>
 			<field name = 'view_mode'>tree,form,kanban</field>
@@ -60,7 +63,7 @@
 		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_sold_action'>
 			<field name = 'name'>Plots Sold</field>
 			<field name = 'res_model'>product.template</field>
-			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',0),('purchase_ok','=',0)]</field>
+			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',0),('purchase_ok','=',0),('status','=','sold')]</field>
 
 			<field name = 'filter' eval = "True"/>
 			<field name = 'view_type'>form</field>
@@ -69,5 +72,19 @@
 
 		<menuitem name = 'Plots Sold' id = 'sale_investment_plots_sold_list'
 			parent = 'sale_investment_plots_lists' action = 'sale_investment_plots_sold_action' sequence = '20'/>
+
+
+		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_reserved_action'>
+			<field name = 'name'>Reservation List</field>
+			<field name = 'res_model'>product.template</field>
+			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',1),('purchase_ok','=',0),('status','=','reserved')]</field>
+
+			<field name = 'filter' eval = "True"/>
+			<field name = 'view_type'>form</field>
+			<field name = 'view_mode'>tree,form,kanban</field>
+		</record>
+
+		<menuitem name = 'Booked Plots' id = 'sale_investment_plots_booked_list'
+			parent = 'sale_investment_plots_lists' action = 'sale_investment_plots_reserved_action' sequence = '15'/>
 	</data>
 </openerp>

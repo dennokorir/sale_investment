@@ -1,9 +1,10 @@
 from openerp import models, fields, api
 
 class investor_next_of_kin(models.Model):
-	_inherit = 'next.of.kin'
+    _inherit = 'next.of.kin'
 
-	investor_id = fields.Many2one('res.partner')
+    investor_id = fields.Many2one('res.partner')
+    investor_app_id = fields.Many2one('sale.investor.registration')
 
 class investor(models.Model):
     _inherit = 'res.partner'

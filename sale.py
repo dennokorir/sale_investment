@@ -1,14 +1,18 @@
-'''
 from openerp import models, fields, api
 
-class order_lines(models.Model):
-	_inherit = 'sale.order.line'
+class sale_order(models.Model):
+    _inherit = 'sale.order'
 
-	
-	@api.onchange('product_id')
-	def mark_as_sold(self):
-		if self.product_id.product_category == 'land':
-			self.product_id.sale_ok = False
-		else:
-			pass
-'''
+    @api.multi
+    def confirm_booking(self):
+        for line in self.order_line:
+            if line.product_id.product_category == 'land':
+                line.product_id.status = 'reserved'
+                line.product_id.sales_person = self.user_id.id
+                line.product_id.customer = self.partner_id.id
+
+    @api.multi
+    def cancel_booking(self):
+        for line in self.order_line:
+            if line.product_category == 'land':
+                line.product_id.status == 'available'

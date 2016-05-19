@@ -2,7 +2,7 @@ from openerp import fields, api, models
 from openerp.exceptions import ValidationError
 
 class invoice(models.Model):
-	
+
 	_inherit = 'account.invoice'
 
 	@api.multi
@@ -12,3 +12,4 @@ class invoice(models.Model):
 				#raise ValidationError("It worked!!")
 				line.product_id.sale_ok = False
 				line.product_id.purchase_ok = False
+                line.product_id.status = 'sold'

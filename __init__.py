@@ -5,3 +5,4 @@ import wizard
 import product
 import account_invoice
 import partner
+import sale

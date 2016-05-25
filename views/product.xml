@@ -46,11 +46,11 @@
 		</record>
 
 
-
+		<!--Plots Available List-->
 		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_available_action'>
 			<field name = 'name'>Plots Available</field>
 			<field name = 'res_model'>product.template</field>
-			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',1),('purchase_ok','=',0),('status','=','available')]</field>
+			<field name = 'domain'>[('product_category','=','land'),('status','=','available'),('sale_ok','=',1)]</field>
 			<field name = 'filter' eval = "True"/>
 			<field name = 'view_type'>form</field>
 			<field name = 'view_mode'>tree,form,kanban</field>
@@ -59,11 +59,11 @@
 		<menuitem name = 'Plots List' id = 'sale_investment_plots_lists' parent = 'sale_investment_project_management_main_menu' sequence = '30'/>
 		<menuitem name = 'Plots Available' id = 'sale_investment_plots_available_list'
 			parent = 'sale_investment_plots_lists' action = 'sale_investment_plots_available_action' sequence = '10'/>
-
+		<!--Plots Sold list-->
 		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_sold_action'>
 			<field name = 'name'>Plots Sold</field>
 			<field name = 'res_model'>product.template</field>
-			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',0),('purchase_ok','=',0),('status','=','sold')]</field>
+			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',0),('purchase_ok','=',0)]</field>
 
 			<field name = 'filter' eval = "True"/>
 			<field name = 'view_type'>form</field>
@@ -73,11 +73,11 @@
 		<menuitem name = 'Plots Sold' id = 'sale_investment_plots_sold_list'
 			parent = 'sale_investment_plots_lists' action = 'sale_investment_plots_sold_action' sequence = '20'/>
 
-
+		<!--Plots Reserved List-->
 		<record model = 'ir.actions.act_window' id = 'sale_investment_plots_reserved_action'>
 			<field name = 'name'>Reservation List</field>
 			<field name = 'res_model'>product.template</field>
-			<field name = 'domain'>[('product_category','=','land'),('sale_ok','=',1),('purchase_ok','=',0),('status','=','reserved')]</field>
+			<field name = 'domain'>[('product_category','=','land'),('status','=','reserved')]</field>
 
 			<field name = 'filter' eval = "True"/>
 			<field name = 'view_type'>form</field>

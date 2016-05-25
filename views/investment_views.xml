@@ -568,6 +568,15 @@
                    </group>
                  </group>
                </page>
+               <page string = "Sales">
+                 <group>
+                   <group>
+                     <field name = 'reservation'/>
+                     <field name = 'reservation_period'/>
+                   </group>
+                   <group></group>
+                 </group>
+               </page>
              </notebook>
            </group>
          </sheet>

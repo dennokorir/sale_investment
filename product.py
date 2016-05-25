@@ -40,3 +40,9 @@ class product(models.Model):
                 self.sale_ok = False
 
 
+    @api.model
+    def cancel_all_reservations(self):
+        product = self.env['product.template'].search([])
+        product.write({'status':'available','sale_ok':True})
+
+

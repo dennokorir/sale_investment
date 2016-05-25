@@ -427,6 +427,8 @@ class general_setup(models.Model):
     land_output_account = fields.Many2one('account.account')
     provisions_for_overheads = fields.Many2one('account.account')
     provisional_vendor = fields.Many2one('res.partner', domain = [('supplier','=',True)])
+    reservation = fields.Boolean(string = "Automatically Cancel Overdue Reservations", help = "Automatically cancel overdue reservations")
+    reservation_period = fields.Integer(string = "Reservation Period(days)")
 
 class test(models.Model):
     _name = 'test'

@@ -33,7 +33,8 @@
 
         'views/sequences.xml',
         'views/product.xml',
-        'views/partner.xml'
+        'views/partner.xml',
+        'data/scheduler.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

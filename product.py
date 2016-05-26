@@ -45,4 +45,6 @@ class product(models.Model):
         product = self.env['product.template'].search([])
         product.write({'status':'available','sale_ok':True})
 
-
+    @api.onchange('title_deed_no')
+    def suffix_plot_name(self):
+        self.name = self.name+'['+self.title_deed_no+']'

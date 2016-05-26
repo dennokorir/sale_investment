@@ -459,8 +459,8 @@
              <group>
                <field name = 'overhead'/>
                <field name = 'description'/>
-               <field name = 'based_on'/>
-               <field name = 'percentage'/>
+               <!--<field name = 'based_on'/>
+               <field name = 'percentage'/>-->
                <field name = 'cost'/>
              </group>
              <group></group>
@@ -490,7 +490,7 @@
          <sheet>
            <group>
              <group>
-              <field name = 'project_id'/>
+              <!--<field name = 'project_id'/>-->
                <field name = 'overhead'/>
                <field name = 'description'/>
                <field name = 'based_on'/>

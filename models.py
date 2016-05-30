@@ -430,6 +430,12 @@ class general_setup(models.Model):
     reservation = fields.Boolean(string = "Automatically Cancel Overdue Reservations", help = "Automatically cancel overdue reservations")
     reservation_period = fields.Integer(string = "Reservation Period(days)")
 
+    @api.one
+    def product_init(self):
+        products = self.env['product.template'].search([])
+        for product in products:
+            product.check_purchasable()
+
 class test(models.Model):
     _name = 'test'
 
@@ -439,6 +445,8 @@ class test(models.Model):
     field4 = fields.Char()
     field5 = fields.Char()
     field6 = fields.Char()
+
+
 
 
 

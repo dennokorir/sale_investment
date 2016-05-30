@@ -577,6 +577,14 @@
                    <group></group>
                  </group>
                </page>
+               <page string = "Quickstart">
+                 <group>
+                   <group>
+                     <button name = 'product_init' type = 'object' string = "Init Products"/>
+                   </group>
+                   <group></group>
+                 </group>
+               </page>
              </notebook>
            </group>
          </sheet>

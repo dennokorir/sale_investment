@@ -31,6 +31,7 @@ class product(models.Model):
                     self.property_account_expense = setup.land_expense_account.id
                     self.valuation = 'real_time'
                     self.cost_method = 'real'
+                    self.type = 'product'
     @api.one
     @api.depends('sale_order_line_product_ids')
     def check_if_sold(self):
@@ -47,4 +48,5 @@ class product(models.Model):
 
     @api.onchange('title_deed_no')
     def suffix_plot_name(self):
-        self.name = self.name+'['+self.title_deed_no+']'
+        if self.name:
+            self.name = self.name+'['+self.title_deed_no+']'

@@ -436,6 +436,11 @@ class general_setup(models.Model):
         for product in products:
             product.check_purchasable()
 
+    @api.one
+    def investor_init(self):
+        investors = self.env['res.partner'].search([('customer','=',True),('investor_no','!=',None)])
+        investors.write({'investor':True})
+
 class test(models.Model):
     _name = 'test'
 
@@ -445,9 +450,3 @@ class test(models.Model):
     field4 = fields.Char()
     field5 = fields.Char()
     field6 = fields.Char()
-
-
-
-
-
-

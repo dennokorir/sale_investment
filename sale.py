@@ -26,7 +26,7 @@ class sale_order(models.Model):
     @api.model
     def scheduler_cancel_bookings(self):
         setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
-        if setup.reservation:#do automatic reservations only if required
+        if setup.reservation:#do automatic cancelling of reservations only if required
             orders = self.env['sale.order'].search([('state','=','manual')])
             for order in orders:
                 if datetime.datetime.strptime(str(order.date_order),'%Y-%m-%d').date() + datetime.timedelta(setup.reservation_period) > datetime.date.today():

@@ -9,7 +9,7 @@ class product(models.Model):
 
     total_acreage = fields.Float()
     title_deed_no = fields.Char()
-    product_category = fields.Selection([('land',"Land"),('housing',"Housing"),('item',"Item")], default = "land", string = 'Product Category')
+    product_category = fields.Selection([('land',"Land"),('housing',"Housing"),('item',"Item")], default = "item", string = 'Product Category')
     ballot = fields.Char()
     sold = fields.Boolean(compute = 'check_if_sold')
     status = fields.Selection([('available',"Available"),('reserved',"Reserved"),('sold',"Sold")], default = 'available')

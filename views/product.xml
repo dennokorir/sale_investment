@@ -31,6 +31,36 @@
 			</field>
 		</record>
 
+		<record model = 'ir.ui.view' id = 'sale_investment_product_template_form2'>
+			<field name = 'name'>Plot</field>
+			<field name = 'model'>product.product</field>
+			<field name = 'inherit_id' ref = "product.product_normal_form_view"/>
+			<field name = 'arch' type = 'xml'>
+				<xpath expr="//page[@string='Information']" position="after">
+  					<page name="Plot" string="Plot Details">
+					    <group>
+						    <group>
+						      <field name="total_acreage"/>
+						      <field name="title_deed_no"/>
+						      <field name="ballot"/>
+						      <field name='sold'/>
+
+						    </group>
+						    <group>
+						    	<field name = 'status'/>
+						    	<field name = 'sales_person'/>
+						    	<field name = 'customer'/>
+						    </group>
+					    </group>
+				  </page>
+				</xpath>
+
+				<xpath expr="//field[@name='type']" position = "after">
+					<field name = 'product_category'/>
+				</xpath>
+			</field>
+		</record>
+
 		<record model = 'ir.ui.view' id = 'sale_investment_product_template_tree'>
 			<field name = 'name'>Plot List</field>
 			<field name = 'model'>product.template</field>

@@ -341,12 +341,20 @@ class land_overheads(models.Model):
         self.description = transaction.description
 
         overhead = self.env['investment.land.transaction.costs'].search([('overhead.id','=',transaction.id)])
-        self.fee_charged = overhead.cost
-        if transaction.attracts_vat:
-            self.vat = 0.16 * self.fee_charged
-            self.total_cost = 1.16 * self.fee_charged
-        else:
-            self.total_cost = self.fee_charged
+        if overhead.based_on == 'flat':
+            self.fee_charged = overhead.cost
+            if transaction.attracts_vat:
+                self.vat = 0.16 * self.fee_charged
+                self.total_cost = 1.16 * self.fee_charged
+            else:
+                self.total_cost = self.fee_charged
+        elif overhead.based_on == 'percentage':
+            self.fee_charged = (overhead.percentage*0.01) * self.header_id.land_purchase_cost
+            if transaction.attracts_vat:
+                self.vat = 0.16 * self.fee_charged
+                self.total_cost = 1.16 * self.fee_charged
+            else:
+                self.total_cost = self.fee_charged
 
 class overheads_summary(models.Model):
     _name = 'sale.investment.overheads.summary'
@@ -432,9 +440,10 @@ class general_setup(models.Model):
 
     @api.one
     def product_init(self):
-        products = self.env['product.template'].search([])
+        products = self.env['product.template'].search([('product_category','=','land')])
         for product in products:
-            product.check_purchasable()
+            #product.check_purchasable()
+            self.env['stock.inventory.line'].create({'inventory_id':13,'location_id':12,'product_id':product.id,'product_qty':1,'theoretical_qty':0})
 
     @api.one
     def investor_init(self):

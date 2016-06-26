@@ -341,12 +341,22 @@
     		</field>
     	</record>
 
+      <record model = 'ir.ui.view' id = 'sale_investment_project_costing_calendar'>
+        <field name = 'name'>Project Costing Calendar</field>
+        <field name = 'model'>investment.project.costing.header</field>
+        <field name = 'arch' type = 'xml'>
+          <calendar string = 'Project Costing Calendar' date_start="date" color = 'id'>
+            <field name = 'name'/>
+          </calendar>
+        </field>
+      </record>
+
       <record model = 'ir.ui.view' id = 'sale_investment_overheads_tree_view'>
         <field name = 'name'>Overheads</field>
         <field name = 'model'>investment.land.overheads</field>
         <field name = 'arch' type = 'xml'>
           <tree editable = "bottom">
-            <field name = 'header_id'/>
+            <!--<field name = 'header_id'/>-->
             <field name = 'code'/>
             <field name = 'description'/>
             <field name = 'fee_charged' sum = "fee_charged"/>
@@ -459,9 +469,9 @@
              <group>
                <field name = 'overhead'/>
                <field name = 'description'/>
-               <!--<field name = 'based_on'/>
-               <field name = 'percentage'/>-->
-               <field name = 'cost'/>
+               <field name = 'based_on'/>
+               <field name = 'percentage' attrs="{'invisible': [('based_on', '!=', 'percentage')]}"/>
+               <field name = 'cost' attrs="{'invisible': [('based_on', '!=', 'flat')]}"/>
              </group>
              <group></group>
            </group>
@@ -696,7 +706,7 @@
         <field name = 'domain'>[('posted','=',0)]</field>
         <field name = 'filter' eval = "True"/>
     		<field name = 'view_type'>form</field>
-    		<field name = 'view_mode'>tree,form</field>
+    		<field name = 'view_mode'>tree,form,calendar</field>
     	</record>
 
       <menuitem name = "Project Management" id = "sale_investment_project_management_main_menu" parent = "sale_investment_main_menu"/>
@@ -709,7 +719,7 @@
         <field name = 'domain'>[('posted','=',1)]</field>
         <field name = 'filter' eval = "True"/>
         <field name = 'view_type'>form</field>
-        <field name = 'view_mode'>tree,form</field>
+        <field name = 'view_mode'>tree,form,calendar</field>
       </record>
 
       <menuitem name = "History" id = 'sale_investment_project_management_history_main_menu' parent = "sale_investment_project_management_main_menu" sequence = '50'/>

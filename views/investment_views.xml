@@ -616,6 +616,76 @@
      </field>
    </record>
 
+   <!--Events-->
+   <record model = 'ir.ui.view' id = 'sale_investments_events_form_view'>
+     <field name = 'name'>Events</field>
+     <field name = 'model'>sale.investment.events</field>
+     <field name = 'arch' type = 'xml'>
+       <form>
+        <sheet>
+           <header></header>
+           <group>
+             <group>
+               <field name = 'name'/>
+               <field name = 'date'/>
+             </group>
+             <group>
+               <field name = 'event_description'/>
+             </group>
+           </group>
+           <notebook>
+             <page string = 'Attendees'>
+               <field name = 'attendees'>
+                 <tree editable = 'bottom'>
+                   <field name = 'name'/>
+                   <field name = 'email'/>
+                   <field name = 'mobile'/>
+                   <field name = 'organization'/>
+                 </tree>
+               </field>
+             </page>
+           </notebook>
+        </sheet>
+       </form>
+     </field>
+   </record>
+
+   <record model = 'ir.ui.view' id = 'sale_investments_events_tree_view'>
+     <field name = 'name'>Events</field>
+     <field name = 'model'>sale.investment.events</field>
+     <field name = 'arch' type = 'xml'>
+       <tree>
+         <field name = 'name'/>
+         <field name = 'date'/>
+         <field name = 'event_description'/>
+       </tree>
+     </field>
+   </record>
+
+    <record model = 'ir.ui.view' id = 'sale_investments_events_calendar_view'>
+         <field name = 'name'>Events</field>
+         <field name = 'model'>sale.investment.events</field>
+         <field name = 'arch' type = 'xml'>
+           <calendar string = 'Events Calendar' date_start="date" color = 'id'>
+             <field name = 'name'/>
+           </calendar>
+        </field>
+    </record>
+
+
+   <record model = 'ir.ui.view' id = 'sale_investments_event_attendees_list'>
+     <field name = 'name'>Event Attendees</field>
+     <field name = 'model'>sale.investment.event.attendees</field>
+     <field name = 'arch' type = 'xml'>
+       <tree editable = 'bottom'>
+         <field name = 'name'/>
+         <field name = 'email'/>
+         <field name = 'mobile'/>
+         <field name = 'organization'/>
+       </tree>
+     </field>
+   </record>
+
    <record model = 'ir.ui.view' id = 'test'>
      <field name = 'name'>Test</field>
      <field name = 'model'>test</field>
@@ -641,7 +711,7 @@
     		<field name = 'view_mode'>tree,form</field>
     	</record>
       <menuitem name ="Investment" id = "sale_investment_main_menu" />
-      <menuitem name = "Investor Management" id = "sale_investment_investor_management_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Investor Management" id = "sale_investment_investor_management_main_menu" parent = "sale_investment_main_menu" sequence = "10"/>
       <menuitem name = "Investor Application list" id = "sale_investment_investor_application_list" parent = "sale_investment_investor_management_main_menu" action = "sale_investments_registration_action"/>
 
       <!--History-->
@@ -709,7 +779,7 @@
     		<field name = 'view_mode'>tree,form,calendar</field>
     	</record>
 
-      <menuitem name = "Project Management" id = "sale_investment_project_management_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Project Management" id = "sale_investment_project_management_main_menu" parent = "sale_investment_main_menu" sequence = "30"/>
       <menuitem name = "Project Costing list" id = "sale_investment_project_costing_list" parent = "sale_investment_project_management_main_menu" action = "sale_investments_project_costing_action" sequence = '10'/>
 
       <!--History-->
@@ -735,7 +805,7 @@
         <field name = 'view_mode'>tree,form</field>
       </record>
 
-      <menuitem name = "Periodic Activities" id = "sale_investment_periodic_activities_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Periodic Activities" id = "sale_investment_periodic_activities_main_menu" parent = "sale_investment_main_menu" sequence = "40"/>
       <menuitem name = "Monthly Penalties" id = "sale_investment_monthly_penalty_list" parent = "sale_investment_periodic_activities_main_menu" action = "sale_investments_monthly_penalty_action"/>
 
        <record model = 'ir.actions.act_window' id = 'sale_investments_land_transactions_action'>
@@ -745,7 +815,7 @@
         <field name = 'view_mode'>tree,form</field>
       </record>
 
-      <menuitem name = "Configuration" id = "sale_investment_configuration_main_menu" parent = "sale_investment_main_menu"/>
+      <menuitem name = "Configuration" id = "sale_investment_configuration_main_menu" parent = "sale_investment_main_menu" sequence = "100"/>
       <menuitem name = "Land Transactions Setup" id = "sale_investment_land_transactions_list" parent = "sale_investment_configuration_main_menu" action = "sale_investments_land_transactions_action"/>
 
       <record model = 'ir.actions.act_window' id = 'sale_investments_land_transaction_costs_action'>
@@ -777,6 +847,28 @@
       <menuitem name = "Tests" id = "test_test" parent = "sale_investment_configuration_main_menu" action = "test_action"/>
     -->
       <menuitem name = "Property by Project" id = "sale_investment_property_by_project" parent = "sale_investment_project_management_main_menu" action = "product.product_category_action" sequence = '20'/>
+
+      <!--Events-->
+      <record model = 'ir.actions.act_window' id = 'sale_investments_events_action'>
+        <field name = 'name'>Events</field>
+        <field name = 'res_model'>sale.investment.events</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>calendar,tree,form</field>
+      </record>
+
+      <menuitem name = 'Events' id = 'sale_investment_events_main_menu' parent = 'sale_investment_main_menu' sequence = "20"/>
+      <menuitem name = 'Events' id = 'sale_investment_events' parent = 'sale_investment_events_main_menu'
+        action = 'sale_investments_events_action' sequence = "10"/>
+
+      <!--Event Attendees-->
+      <record model = 'ir.actions.act_window' id = 'sale_investments_event_attendees_action'>
+        <field name = 'name'>Event Attendees</field>
+        <field name = 'res_model'>sale.investment.event.attendees</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+
+      <menuitem name = 'Attendees' id = 'sale_investment_event_attendees' parent = 'sale_investment_events_main_menu' action = 'sale_investments_event_attendees_action' sequence = "20"/>
 
     </data>
 </openerp>

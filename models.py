@@ -459,3 +459,22 @@ class test(models.Model):
     field4 = fields.Char()
     field5 = fields.Char()
     field6 = fields.Char()
+
+class sale_investment_events(models.Model):
+    _name = 'sale.investment.events'
+
+    name = fields.Char(required = True)
+    date = fields.Date(required = True)
+    event_description = fields.Text()
+    attendees = fields.One2many('sale.investment.event.attendees','event_id')
+
+class sale_investment_event_attendees(models.Model):
+    _name = 'sale.investment.event.attendees'
+
+    event_id = fields.Many2one('sale.investment.event.attendees')
+    name = fields.Char()
+    email = fields.Char()
+    mobile = fields.Char()
+    organization = fields.Char()
+
+

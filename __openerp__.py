@@ -34,7 +34,8 @@
         'views/sequences.xml',
         'views/product.xml',
         'views/partner.xml',
-        'data/scheduler.xml'
+        'data/scheduler.xml',
+        'views/account_invoice.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

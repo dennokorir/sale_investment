@@ -25,7 +25,7 @@ class project_costing_wizard(models.TransientModel):
 			cost_method = 'standard'
 
 
-			product_category = self.env['product.category'].create({'name':self.project_no,'parent_id':1,'type':'normal',
+			product_category = self.env['product.category'].create({'name':self.project_name,'parent_id':1,'type':'normal',
 				'property_stock_valuation_account_id':setup.land_asset_account.id})
 			#all product fields will be the same except internal reference
 			#internal reference will use number series.

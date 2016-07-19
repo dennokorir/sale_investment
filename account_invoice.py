@@ -9,30 +9,35 @@ class invoice(models.Model):
     schedule_ids = fields.One2many('account.invoice.repayment.schedule','invoice_id', readonly = True)
     installments = fields.Integer(default = 1)
     amount_due = fields.Float(compute = 'compute_dues')
+    deposit = fields.Float()
+    installment_start_date = fields.Date()
+    as_at = fields.Date(compute = 'compute_dues')
 
     @api.one
     def generate_schedule(self):
         self.schedule_ids.unlink()
         installment_amount = 0.0
         schedule = []
-        installment_amount = self.amount_total/self.installments
+        installment_amount = (self.amount_total-self.deposit)/self.installments
         schedule = [installment_amount for installment in range(1,self.installments + 1)]
-        due_date = self.date_due
+        due_date = self.installment_start_date#date_due
         installment = 0
         balance = self.amount_total
         repayment_schedule = self.env['account.invoice.repayment.schedule']
         for entry in schedule:
             installment += 1
-            due_date = next_date(due_date)
+
             repayment_schedule.create({'invoice_id':self.id,'installment':installment, 'date_due':due_date,
                 'balance':balance, 'installment_amount':entry})
             balance -= entry
+            due_date = next_date(due_date)
 
     @api.one
     @api.depends('schedule_ids')
     def compute_dues(self):
         total = 0.0
         paid = self.amount_total - self.residual
+        as_at = None
         due = 0.0
         for line in self.schedule_ids:
             total += line.installment_amount
@@ -45,8 +50,10 @@ class invoice(models.Model):
             if datetime.strptime(line.date_due, '%Y-%m-%d') <= datetime.now():# and line.paid == False
                 due += line.installment_amount
                 line.due = True
+                as_at = line.date_due
         if ((due-paid)>0):
             self.amount_due = due - paid #this is the true due amount
+        self.as_at = as_at
 
 
 

@@ -12,6 +12,9 @@ class invoice(models.Model):
     deposit = fields.Float()
     installment_start_date = fields.Date()
     as_at = fields.Date(compute = 'compute_dues')
+    #These additional 2 fields are meant to facilitate forecasting dues
+    report_as_at = fields.Date(default = fields.Date.today)
+    report_amount_due = fields.Float(compute = 'compute_dues')
 
     @api.one
     def generate_schedule(self):
@@ -39,6 +42,7 @@ class invoice(models.Model):
         paid = self.amount_total - self.residual
         as_at = None
         due = 0.0
+        report_due = 0.0
         for line in self.schedule_ids:
             total += line.installment_amount
             #if total < paid:
@@ -47,12 +51,20 @@ class invoice(models.Model):
             #    line.paid = False
 
             #calculate dues
-            if datetime.strptime(line.date_due, '%Y-%m-%d') <= datetime.now():# and line.paid == False
+            if datetime.strptime(line.date_due, '%Y-%m-%d') <= datetime.now():
                 due += line.installment_amount
                 line.due = True
                 as_at = line.date_due
+            #calculate dues for forecasting
+            if datetime.strptime(line.date_due, '%Y-%m-%d') <= datetime.strptime(self.report_as_at,'%Y-%m-%d'):
+                report_due += line.installment_amount
+                #line.due = True
+                #as_at = line.date_due
+
         if ((due-paid)>0):
             self.amount_due = due - paid #this is the true due amount
+        if ((report_due-paid)>0):
+            self.report_amount_due = report_due - paid
         self.as_at = as_at
 
 
@@ -67,6 +79,20 @@ class invoice(models.Model):
                     line.product_id.purchase_ok = False
                     line.product_id.status = 'sold'
 
+    @api.multi
+    def add_customer_tags(self):
+        customer_projects = self.partner_id.category_id
+        for line in self.invoice_line:
+            if line.product_id:
+                if line.product_id.product_category == 'land':
+                    customer_tags = self.env['res.partner.category'].search([('project_id','=',line.product_id.categ_id.id),('partner_ids','=',self.partner_id.id)])
+                    if len(customer_tags)>0:
+                        pass # this customer is already tagged as a member of specified product project
+                    else:
+                        #raise ValidationError('Tag this customer')
+                        self.partner_id.category_id = [(0,0,{'name':line.product_id.categ_id.name,'active':True, 'project_id':line.product_id.categ_id.id})]
+
+
 class account_invoice_repayment_schedule(models.Model):
     _name = 'account.invoice.repayment.schedule'
 
@@ -76,7 +102,7 @@ class account_invoice_repayment_schedule(models.Model):
     balance = fields.Float()
     installment_amount = fields.Float()
     due = fields.Boolean(compute = 'mark_as_paid')
-    paid = fields.Boolean(compute = 'mark_as_paid')#
+    paid = fields.Boolean(compute = 'mark_as_paid')
 
     @api.one
     @api.depends('invoice_id')

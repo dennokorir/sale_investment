@@ -34,5 +34,7 @@
 			target = "new"
 			key2 = "client_action_multi" />
 
+
+
 	</data>
 </openerp>

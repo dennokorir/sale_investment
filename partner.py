@@ -21,5 +21,12 @@ class investor(models.Model):
     gender = fields.Selection([('male',"Male"),('female',"Female")])
     occupation = fields.Char()
 
+class investor_category(models.Model):
+    '''
+    This extension is to allow us to associate investors with projects.
+    The associated projects will be listed under customer tags allowing us to search for customers
+    per project. We'll also add a report on the same
+    '''
+    _inherit = 'res.partner.category'
 
-
+    project_id = fields.Many2one('product.category')

@@ -27,6 +27,8 @@
                     <field name = 'installments'/>
                     <field name = 'amount_due'/>
                     <field name = 'as_at'/>
+                    <field name = 'report_as_at'/>
+                    <field name = 'report_amount_due'/>
                 </xpath>
                 <!--Generate Schedule Button-->
                 <xpath expr="//button[@name='invoice_open']" position="before">

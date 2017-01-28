@@ -45,7 +45,7 @@ class project_costing_wizard(models.TransientModel):
 				end = line.no_of_plots + start
 				for plot in range(start, end):
 					no = self.numbering_prefix.upper() + str(plot).zfill(4)
-					land_parcel = self.env['product.template'].create({'name':name,'categ_id':categ_id,'type':product_type,
+					land_parcel = self.env['product.product'].create({'name':name,'categ_id':categ_id,'type':product_type,
 						'state':state,'uom_id':uom_id,'qty_available':qty_available,'virtual_available':virtual_available,
 						'default_code':no,'standard_price':line.land_cost_per_plot,'list_price':line.price_per_plot,
 						'product_category':'land','sale_ok':True,'purchase_ok':False,'total_acreage':line.size_of_plots,
@@ -107,3 +107,5 @@ class project_costing_wizard(models.TransientModel):
 	        for line in project.overhead_summary_ids:
 	            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Project Overheads::' + line.description, 'account_id':dr,'move_id':move_id,'debit':line.total_cost})
 	            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Project Overheads::' + line.description, 'account_id':cr,'move_id':move_id,'credit':line.total_cost})
+
+	        move.post()

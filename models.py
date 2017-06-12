@@ -44,6 +44,7 @@ class investor_registration(models.Model):
     company_registration_date = fields.Date(string = 'Company/Group Registration Date')
     investor_group_ids = fields.One2many('sale.investment.invetor.group','investor_app_id')
     next_of_kin_ids = fields.One2many('next.of.kin','investor_app_id')
+    payment_ids = fields.One2many('investor.application.payments','investor_application_id')
 
     @api.one
     def create_investor(self):
@@ -68,6 +69,96 @@ class investor_registration(models.Model):
         setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
         sequence = self.env['ir.sequence'].search([('id','=',setup.investor_application_nos.id)])
         self.no = sequence.next_by_id(sequence.id, context = None)
+
+
+    @api.one
+    def action_post(self,amount):
+        if not self.created:
+            #date
+            if self.registration_date:
+                today = self.registration_date
+            else:
+                today = datetime.now().strftime("%m/%d/%Y")
+            setup = self.env['sale.investment.general.setup'].search([('id','=',1)])
+            #create journal header
+            journal = self.env['account.journal'].search([('id','=',setup.miscellaneous_journal.id)]) #get journal id
+            #period
+            period = self.env['account.period'].search([('state','=','draft'),('date_start','<=',today),('date_stop','>=',today)])
+            period_id = period.id
+
+            journal_header = self.env['account.move']#reference to journal entry
+
+            move = journal_header.create({'journal_id':journal.id,'period_id':period_id,'state':'draft','name':self.name,
+                'date':today})
+
+            move_id = move.id
+
+            #create journal lines
+            journal_lines = self.env['account.move.line']
+
+            #get required accounts for the transaction
+            #debit account
+            bank = self.env['account.journal'].search([('id','=',setup.registration_bank.id)])
+            bank_acc = bank.default_debit_account_id.id
+
+            cr = setup.registration_fee_acc.id
+
+            #investor_ledger = self.env['investor.ledger.entry']
+
+            #ledgers = self.env['investor.ledger.entry'].search([])
+            #entries = [ledger.entry_no for ledger in ledgers]
+            #try:
+            #    entry_no = max(entries)
+            #except:
+            #    entry_no = 0
+
+            #post journal
+            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Registration Fees for' + '::' + self.name,'account_id':cr,'move_id':move_id,'credit':amount})
+            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Registration Fees for' + '::' + self.name,'account_id':bank_acc,'move_id':move_id,'debit':amount})
+            #post member ledger entry
+            #entry_no += 1
+            #member = self.env['sacco.member'].search([('id','=',line['member_no'].id)])
+            #member_name = member.name
+            #member_ledger.create({'member_no':line.member_no.id,'member_name':member_name,'date':today,'transaction_no':transaction_no,'transaction_name':transaction_name + '::' + self.name,'amount':factor*line.amount,'transaction_type':entry_type,'entry_no':entry_no})
+
+            move.post()
+            if setup.registration_fees <= sum(payment.amount for payment in self.payment_ids):
+                self.create_investor()
+            else:
+                pass
+
+class investor_application_payments(models.Model):
+    _name = 'investor.application.payments'
+
+    investor_application_id = fields.Many2one('sale.investor.registration')
+    amount = fields.Float()
+    date = fields.Date()
+    reference = fields.Char()
+    processed = fields.Boolean()
+    flagged = fields.Boolean()
+    mobileNo = fields.Char()
+    billerCode = fields.Char()
+    messageId = fields.Char()
+    paymentChannel = fields.Char()
+    serviceCode = fields.Char()
+    customerName = fields.Char()
+    transactionId = fields.Char()
+    originalTransactionRef = fields.Char()
+
+    @api.model
+    def auto_post_receipts(self):
+        receipts = self.env['investor.application.payments'].search([('processed','=',False),('flagged','=',False)])
+        for receipt in receipts:
+            try:
+                receipt.investor_application_id.action_post(receipt.amount)
+                receipt.processed = True
+            except:
+                receipt.flagged = True
+
+    @api.one
+    def action_post(self):
+        self.investor_application_id.action_post(self.amount)
+        self.processed = True
 
 class investment_group(models.Model):
     _name = 'sale.investment.invetor.group'
@@ -437,6 +528,10 @@ class general_setup(models.Model):
     provisional_vendor = fields.Many2one('res.partner', domain = [('supplier','=',True)])
     reservation = fields.Boolean(string = "Automatically Cancel Overdue Reservations", help = "Automatically cancel overdue reservations")
     reservation_period = fields.Integer(string = "Reservation Period(days)")
+    miscellaneous_journal = fields.Many2one('account.journal')
+    registration_bank = fields.Many2one('account.journal',domain = [('type','=','bank')])
+    registration_fee_acc = fields.Many2one('account.account')
+    registration_fees = fields.Float()
 
     @api.one
     def product_init(self):

@@ -109,3 +109,13 @@ class project_costing_wizard(models.TransientModel):
 	            journal_lines.create({'journal_id':journal.id,'period_id':period_id,'date':today,'name':'Project Overheads::' + line.description, 'account_id':cr,'move_id':move_id,'credit':line.total_cost})
 
 	        move.post()
+
+
+class investor_application_wizard(models.TransientModel):
+	_name = 'investor.application.wizard'
+
+	@api.multi
+	def receipts_post(self):
+		payments = self.env['investor.application.payments'].browse(self._context.get('active_ids'))
+		for payment in payments:
+		    payment.action_post()

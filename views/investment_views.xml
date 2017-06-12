@@ -1,6 +1,37 @@
 <openerp>
     <data>
 
+      <record model = 'ir.actions.act_window' id = 'investor_registration_payments_action'>
+        <field name = 'name'>Registration Payments</field>
+        <field name = 'res_model'>investor.application.payments</field>
+        <field name = 'view_type'>form</field>
+        <field name = 'view_mode'>tree,form</field>
+      </record>
+
+      <record model = 'ir.ui.view' id = 'investor_payments_tree'>
+        <field name = 'name'>Payments</field>
+        <field name = 'model'>investor.application.payments</field>
+        <field name = 'arch' type = 'xml'>
+          <tree>
+            <field name = 'investor_application_id'/>
+            <field name = 'date'/>
+            <field name = 'amount'/>
+            <field name = 'processed'/>
+            <field name = 'flagged'/>
+          </tree>
+        </field>
+      </record>
+
+      <record model = 'ir.ui.view' id = 'investor_payments_search_view'>
+        <field name = 'name'>Investor Payments Search</field>
+        <field name = 'model'>investor.application.payments</field>
+        <field name = 'arch' type = 'xml'>
+          <search>
+            <field name = 'investor_application_id'/>
+          </search>
+        </field>
+      </record>
+
     	<record model = 'ir.ui.view' id = 'sale_investment_investor_registrations_form'>
     		<field name = 'name'>Investor Registration</field>
     		<field name = 'model'>sale.investor.registration</field>
@@ -11,6 +42,10 @@
               <field name = 'state' widget = "statusbar"/>
             </header>
             <sheet>
+            <div class="oe_right oe_button_box" name="buttons">
+              <button name = '%(sale_investment.investor_registration_payments_action)d' class = "oe_inline oe_stat_button" type = 'action' icon="fa-check-square-o" context="{'search_default_investor_application_id':id}">
+              </button>
+            </div>
             <group>
                 <group string = 'General'>
                   <field name  = 'no' />
@@ -541,6 +576,17 @@
 
              </group>
              <notebook>
+              <page string = 'Membership'>
+                <group>
+                  <group>
+                    <field name = 'miscellaneous_journal'/>
+                    <field name = 'registration_bank'/>
+                    <field name = 'registration_fee_acc'/>
+                    <field name = 'registration_fees'/>
+                  </group>
+                  <group></group>
+                </group>
+              </page>
                <page string = 'Numbering'>
                  <group>
                    <field name = 'investor_application_nos'/>
